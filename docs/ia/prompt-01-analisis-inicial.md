@@ -210,11 +210,6 @@ Explícame las decisiones en español claro, de manera que pueda defender el tra
 
 ---
 
-## Registro de uso (tabla del PDF, sección 8)
+---
 
-| Herramienta IA | Prompt exacto utilizado | Aporte de la IA | Validación / Corrección del estudiante | Fuente verificada |
-|---|---|---|---|---|
-| Claude Code (Claude Opus 5.5) | Prompt 01 (arriba) | Lectura del PDF y las pizarras; transcripción con dudas marcadas; diagnóstico del equipo (solo lectura); consulta de la documentación de Oracle 21c sobre funciones de XE y auditoría; propuesta de alcance y plan por etapas. | **Pendiente.** El estudiante debe comparar la transcripción con las fotos originales y abrir los enlaces de Oracle citados en la respuesta. | Pendiente de revisión por el estudiante |
-| Claude Code (Claude Opus 5.5) | Prompt 02: «entonces que es lo que hay que hacer o que es lo que necesitas de mi para hacer el trabajo» | Lista de pasos y datos necesarios para continuar. | Pendiente | — |
-| Claude Code (Claude Opus 5.5) | Prompt 03: «1. -si es mi laptop, -si,-es individual y mañana necesito llevar un base para enseñarle al profesor y explicarle algo mas o menos 2. tu no puedes descargar oracle?, no te sirve el de docker que tengo ?» (más las respuestas «usa la que tu creas que es mejor» y «Detenerlo (Recomendado)») | Elección de Oracle AI Database 26ai Free (imagen oficial ya descargada); creación del contenedor aislado `iso27001-oracle`; diagnóstico E-00; borrador de avance (hoy en `avance-profesor/`) (escala, 6 riesgos, 15 tareas, mapeo de 15 controles). | **Pendiente.** Revisar que cada valor de E-00 coincida con `evidencias/E-00_diagnostico_entorno.txt`; abrir la guía de licencias de Oracle 26ai y confirmar las funciones de Free; verificar los títulos de los controles en ISO/IEC 27002:2022. | Oracle AI Database Licensing Information User Manual 26ai (pendiente de revisión por el estudiante) |
-| Claude Code (Claude Opus 5.5) | Prompt 04: «entonces del proyecto en si no haz hecho nada? segundo mi nombre es ismael rojas herrera para que lo agregues, tercero, dame un md explicando un poco el proyecto en general, lo que voy a hacer para desarrollarlo y  TODO el avance» | Nombre del estudiante agregado al avance; documento explicativo (reemplazado luego por `avance-profesor/EXPLICACION-PARA-EL-PROFESOR.md`) con la descripción del proyecto, el estado, el plan y todo el avance. | Pendiente | — |
+El registro de este prompt (aporte de la IA, validación y fuente) está en la tabla de uso de IA: `docs/ia/registro-uso-ia.md`.
