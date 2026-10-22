@@ -1,0 +1,29 @@
+== Evidencia: PR-18_cliente_sin_cifrado   Fecha: 2026-10-21 23:47:39 -0600
+
+>>> PR-18.1 Cliente normal (acepta cifrado). Esperado: conexión exitosa con AES256
+
+USUARIO
+--------------------------------------------------------------------------------
+PROTOCOLO
+--------------------------------------------------------------------------------
+JUAN
+tcp
+
+
+
+NETWORK_SERVICE_BANNER
+----------------------------------------------------------------------------------------------------
+Encryption service for Linux: Version 23.26.1.0.0 - Production
+AES256 Encryption service adapter for Linux: Version 23.26.1.0.0 - Production
+Crypto-checksumming service for Linux: Version 23.26.1.0.0 - Production
+SHA256 Crypto-checksumming service adapter for Linux: Version 23.26.1.0.0 - Production
+
+
+>>> PR-18.2 Cliente que RECHAZA el cifrado. Esperado: ORA-12660
+SQLNET.ENCRYPTION_CLIENT = REJECTED
+SQLNET.CRYPTO_CHECKSUM_CLIENT = REJECTED
+ERROR:
+ORA-12660: Encryption or crypto-checksumming parameters incompatible
+Help: https://docs.oracle.com/error-help/db/ora-12660/
+
+

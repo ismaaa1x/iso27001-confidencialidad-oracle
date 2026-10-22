@@ -1,0 +1,22 @@
+== Evidencia: PR-09_auditor_no_administra
+== Script   : sql/30_pruebas/PR-09_auditor_no_administra.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:53 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-09.1 Esperado: ORA-01031 (no puede apagar la auditoría)
+NOAUDIT POLICY pol_conf_acceso_datos
+                                   *
+ERROR at line 1:
+ORA-01031: insufficient privileges
+Help: https://docs.oracle.com/error-help/db/ora-01031/
+
+
+>>> PR-09.2 Esperado: rechazo ORA-41732 en 26ai (ORA-01031 en versiones anteriores)
+CREATE AUDIT POLICY pol_auditor_intento ACTIONS LOGON
+*
+ERROR at line 1:
+ORA-41732: Incorrect authorization of privilege with audit policy.
+Help: https://docs.oracle.com/error-help/db/ora-41732/
+
+

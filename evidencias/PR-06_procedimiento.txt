@@ -1,0 +1,39 @@
+== Evidencia: PR-06_procedimiento
+== Script   : sql/30_pruebas/PR-06_procedimiento_vs_insert.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:50 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-06.1 Esperado: ORA-41900 missing INSERT privilege (ORA-01031 en 19c/21c)
+INSERT INTO ventas_lab.ventas (id_cliente, vendedor, monto) VALUES (1, 'JUAN', 999)
+                       *
+ERROR at line 1:
+ORA-41900: missing INSERT privilege on "VENTAS_LAB"."VENTAS"
+Help: https://docs.oracle.com/error-help/db/ora-41900/
+
+
+>>> PR-06.2 Esperado: PL/SQL procedure successfully completed (cliente 1 es de JUAN)
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+>>> PR-06.3 Esperado: ORA-20002 (cliente 2 es de ANA)
+BEGIN ventas_lab.registrar_venta(p_id_cliente => 2, p_monto => 15000); END;
+
+*
+ERROR at line 1:
+ORA-20002: Cliente inexistente o no visible para el vendedor
+ORA-06512: at "VENTAS_LAB.REGISTRAR_VENTA", line 19
+ORA-06512: at line 1
+
+
+>>> Ventas visibles para JUAN (solo las suyas)
+
+VENDEDOR       VENTAS      TOTAL
+---------- ---------- ----------
+JUAN               11     240000
+
+1 row selected.
+

@@ -1,0 +1,19 @@
+== Evidencia: A-02_auditar_reglas
+== Script   : sql/40_actuar/A-02_auditar_reglas_seguridad.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:15 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+
+Audit policy created.
+
+
+Audit succeeded.
+
+
+POLICY_NAME                ENABLED_OPTION ENTITY_NAME
+-------------------------- -------------- ------------
+POL_CONF_CAMBIOS_REGLAS    BY USER        ALL USERS
+
+1 row selected.
+

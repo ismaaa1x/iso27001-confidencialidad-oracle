@@ -1,0 +1,46 @@
+== Evidencia: VC-11_enmascaramiento
+== Script   : sql/20_verificacion/VC-11_enmascaramiento.sql
+== Modo     : sysdba-pdb
+== Fecha    : 2026-10-21 23:48:04 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+
+Session altered.
+
+=== (a) Política de redacción y columnas ===
+
+OBJECT_OWNER   OBJECT_NAME              POLICY_NAME                EXPRESSION                                         ENA
+-------------- ------------------------ -------------------------- -------------------------------------------------- ---
+VENTAS_LAB     CLIENTES                 RED_CLIENTES_DATOS_PERSONA 1=1                                                YES
+                                        LES
+
+
+1 row selected.
+
+
+COLUMN_NAME      FUNCTION_TYPE          FUNCTION_PARAMETERS
+---------------- ---------------------- ------------------------------------
+CEDULA           PARTIAL REDACTION      VFVVVVFVVVV,V-VVVV-VVVV,*,1,5
+CORREO           REGEXP REDACTION
+TARJETA          PARTIAL REDACTION      VVVVFVVVVFVVVVFVVVV,VVVV-VVVV-VVVV-V
+                                        VVV,*,1,12
+
+
+3 rows selected.
+
+=== (b) Comparación copia DEV contra producción ===
+
+ FILAS_DEV
+----------
+        20
+
+1 row selected.
+
+=== Resultado ===
+
+A_COLUMNAS_REDACTADAS B_COINCIDENCIAS_REALES RESULTADO
+--------------------- ---------------------- ------------
+                    3                      0 CUMPLE
+
+1 row selected.
+

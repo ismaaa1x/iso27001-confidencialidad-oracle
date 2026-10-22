@@ -1,0 +1,45 @@
+<!-- Fragmento del informe: Marco teórico (se inserta en informe.html y en el artefacto). -->
+<h3>Cambios de ISO/IEC 27001:2013 a ISO/IEC 27001:2022</h3>
+<p>ISO/IEC 27001 establece los requisitos de un sistema de gestión de seguridad de la información (SGSI): contexto, liderazgo, planificación, apoyo, operación, evaluación del desempeño y mejora (cláusulas 4 a 10). Su Anexo A contiene un catálogo de controles de referencia. ISO/IEC 27002 no es certificable: explica el propósito de cada control y orienta su implementación. En la edición 2022, el Anexo A pasó de 114 controles agrupados en 14 dominios a <strong>93 controles en 4 temas</strong>: organizacionales (5.1–5.37), de personas (6.1–6.8), físicos (7.1–7.14) y tecnológicos (8.1–8.34). Se fusionaron controles y se añadieron 11 nuevos. Tres de los nuevos están en este trabajo: <em>8.10 Eliminación de información</em>, <em>8.11 Enmascaramiento de datos</em> y <em>8.12 Prevención de fuga de datos</em>. ISO/IEC 27002:2022 añadió además atributos para clasificar los controles (por ejemplo, el tipo de control y la propiedad que protegen: confidencialidad, integridad o disponibilidad). En el cuerpo de ISO/IEC 27001 apareció una nueva cláusula 6.3 sobre la planificación de cambios. Las organizaciones certificadas con la edición 2013 tuvieron hasta el 31 de octubre de 2025 para adaptarse. Aplicar controles del Anexo A no equivale a certificarse: la certificación evalúa todo el SGSI, incluida la declaración de aplicabilidad, mediante un organismo acreditado.</p>
+
+<h3>Mínimo privilegio y separación de funciones en el rol de DBA</h3>
+<p>El <strong>mínimo privilegio</strong> consiste en conceder a cada identidad solo los permisos necesarios para su función y durante el tiempo necesario. En Oracle se aplica con roles por función (<code>VENDEDORES</code>, <code>SOPORTE_CONSULTA</code>), evitando privilegios de sistema <code>ANY</code>, concesiones a <code>PUBLIC</code> y el rol <code>DBA</code> en cuentas que no administran la base. También se aplica obligando a que los cambios pasen por procedimientos (<code>REGISTRAR_VENTA</code>) en lugar de dar <code>INSERT</code> directo. La <strong>separación de funciones</strong> busca que nadie controle por sí solo una operación crítica y su supervisión. En este laboratorio, el auditor puede leer el rastro (<code>AUDIT_VIEWER</code>) pero no modificarlo ni leer los datos de negocio. El DBA, en cambio, sigue siendo un riesgo residual: la prueba PR-19 muestra que un administrador con privilegios <code>ANY</code> puede alterar las reglas de acceso. Por eso los controles técnicos se complementan con auditoría y, como mejora, con Oracle Database Vault, que puede impedir que incluso un DBA lea los datos de negocio.</p>
+
+<h3>Defensa en profundidad y Zero Trust aplicados a bases de datos</h3>
+<p>La <strong>defensa en profundidad</strong> superpone controles independientes para que la falla de uno no exponga la información. El laboratorio lo demuestra con la cuenta <code>APP_RIESGO</code>: aunque tenía <code>SELECT ANY TABLE</code>, VPD le devolvió 0 filas y la copia de desarrollo solo contenía datos falsos. Si alguien copia los archivos, TDE impide leerlos, y la auditoría deja constancia del intento. <strong>Zero Trust</strong> (NIST SP 800-207) elimina la confianza implícita por ubicación de red: cada acceso se autentica, se autoriza con el mínimo privilegio y se evalúa de forma continua. En una base de datos esto se traduce en:</p>
+<ul>
+  <li>autenticar a cada usuario con una cuenta propia y perfiles que bloquean y expiran sesiones;</li>
+  <li>autorizar por fila y por columna (VPD y Data Redaction);</li>
+  <li>cifrar el canal aunque la red sea «interna»;</li>
+  <li>registrar cada acceso a datos sensibles;</li>
+  <li>denegar por defecto: la función VPD devuelve <code>1 = 0</code> a quien no tiene una regla.</li>
+</ul>
+
+<h3>Controles técnicos de confidencialidad en Oracle</h3>
+<ul>
+  <li><strong>Transparent Data Encryption (TDE):</strong> cifra datafiles, redo y respaldos con claves custodiadas en un keystore (wallet). Protege contra la copia de archivos, no contra un usuario autorizado que consulta por SQL. En XE y Free no se puede cifrar en línea un tablespace existente, por lo que se crea uno nuevo ya cifrado.</li>
+  <li><strong>Enmascaramiento:</strong> el <em>dinámico</em> (Oracle Data Redaction, que SQL Server llama «Dynamic Data Masking») oculta el dato al consultarlo sin cambiar lo almacenado. El <em>estático</em> reemplaza los valores en las copias para desarrollo y pruebas. Oracle lo ofrece como Data Masking and Subsetting (Enterprise Manager); aquí se implementó con SQL.</li>
+  <li><strong>Seguridad a nivel de fila:</strong> Oracle la implementa con Virtual Private Database (<code>DBMS_RLS</code>), que añade un predicado a cada sentencia. Es el equivalente de «Row Level Security» en PostgreSQL y SQL Server.</li>
+  <li><strong>Cifrado en tránsito:</strong> Oracle Net ofrece Native Network Encryption (en 23ai/26ai solo con algoritmos fuertes como AES y SHA-2) y TLS. Oracle recomienda TLS porque además autentica al servidor con certificados. El ejemplo <code>pg_hba.conf</code> del enunciado corresponde a PostgreSQL; en Oracle la configuración equivalente está en <code>sqlnet.ora</code> y <code>listener.ora</code>.</li>
+</ul>
+
+<h3>Prevención de fuga de datos (DLP) y respaldos cifrados</h3>
+<p>DLP combina prevención y detección para evitar que la información salga de su ámbito autorizado. A nivel de base de datos, el DBA contribuye con varias medidas:</p>
+<ul>
+  <li>cifrado de datafiles y exportaciones;</li>
+  <li>control del directorio de exportación;</li>
+  <li>auditoría de lecturas masivas y del uso de privilegios amplios;</li>
+  <li>copias de desarrollo sin datos reales.</li>
+</ul>
+<p>Los <strong>respaldos</strong> son copias completas de la información y requieren la misma protección que la base: deben cifrarse (RMAN con cifrado; Data Pump con <code>ENCRYPTION=ALL</code> en las ediciones que lo permiten), y el keystore debe respaldarse y guardarse separado de los datos. El laboratorio mostró dos detalles importantes. Primero, un export de Data Pump guarda en claro los datos de tablas cifradas con TDE (Oracle lo advierte con ORA-39173). Segundo, en Oracle Free el cifrado de exports no está habilitado (ORA-00439), mientras que el de RMAN sí (<code>V$OPTION</code>: Backup Encryption = TRUE). Al eliminar un respaldo cifrado, destruir la clave equivale a destruir el dato (<em>crypto-shredding</em>). Es más fiable que sobrescribir el archivo en discos SSD.</p>
+
+<h3>Registro, monitoreo y correlación (SIEM)</h3>
+<p>La auditoría responde quién hizo qué, cuándo, desde dónde y con qué resultado. Desde 12c, Oracle ofrece la <strong>auditoría unificada</strong> (<code>UNIFIED_AUDIT_TRAIL</code>, almacenada en <code>AUDSYS.AUD$UNIFIED</code>). La auditoría tradicional (<code>SYS.AUD$</code>, parámetro <code>AUDIT_TRAIL</code>) está obsoleta desde 21c y fue retirada en 23ai/26ai. Fine-Grained Auditing registra el acceso a columnas concretas, como la tarjeta. Los <strong>redo logs, los archived logs y LogMiner</strong> registran <em>cambios</em> (INSERT, UPDATE, DELETE, DDL) y sirven para reconstruir modificaciones o investigar fraudes. Sin embargo, no registran consultas <code>SELECT</code>, que son el principal riesgo para la confidencialidad, por lo que no sustituyen a la auditoría. Un <strong>SIEM</strong> centraliza y correlaciona los registros de varias fuentes, y conserva una copia fuera del alcance del DBA. En el laboratorio no hay un SIEM real: se configuró la retención y la purga controlada del rastro, y el envío por syslog queda propuesto.</p>
+
+<h3>Normativa costarricense: Ley 8968 y su reglamento</h3>
+<p>La Ley n.º 8968, <em>Protección de la Persona frente al Tratamiento de sus Datos Personales</em> (7 de julio de 2011), garantiza el derecho a la autodeterminación informativa y se aplica a los datos personales en bases de datos automatizadas o manuales, públicas o privadas (arts. 1 y 2). Distingue datos de acceso irrestricto, de acceso restringido y sensibles (arts. 3 y 9). Para el DBA, los artículos clave son dos:</p>
+<ul>
+  <li>El <strong>artículo 10 (Seguridad de los datos)</strong> obliga al responsable a «adoptar las medidas de índole técnica y de organización necesarias para garantizar la seguridad de los datos de carácter personal y evitar su alteración, destrucción accidental o ilícita, pérdida, tratamiento o acceso no autorizado».</li>
+  <li>El <strong>artículo 11 (Deber de confidencialidad)</strong> extiende el secreto profesional o funcional a quienes intervienen en cualquier fase del tratamiento, «aun después de finalizada su relación con la base de datos».</li>
+</ul>
+<p>La autoridad de control es la Agencia de Protección de Datos de los Habitantes (Prodhab). El reglamento de la ley es el Decreto Ejecutivo n.º 37554-JP (2013). Los controles de este trabajo son medidas técnicas que contribuyen al artículo 10, pero no constituyen por sí mismos el cumplimiento de la ley, que también exige consentimiento, derechos de acceso y rectificación, e inscripción cuando corresponda.</p>

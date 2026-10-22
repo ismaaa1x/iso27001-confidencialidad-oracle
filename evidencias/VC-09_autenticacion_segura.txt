@@ -1,0 +1,47 @@
+== Evidencia: VC-09_autenticacion_segura
+== Script   : sql/20_verificacion/VC-09_autenticacion_segura.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:01 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== Límites de sesión y bloqueo del perfil ===
+
+PROFILE                RESOURCE_NAME              LIMIT
+---------------------- -------------------------- --------------------------------
+PERFIL_CONFIDENCIAL    FAILED_LOGIN_ATTEMPTS      3
+PERFIL_CONFIDENCIAL    IDLE_TIME                  15
+PERFIL_CONFIDENCIAL    INACTIVE_ACCOUNT_TIME      90
+PERFIL_CONFIDENCIAL    PASSWORD_LOCK_TIME         .0416
+PERFIL_CONFIDENCIAL    SESSIONS_PER_USER          3
+
+5 rows selected.
+
+=== Verificadores de contraseña de las cuentas del laboratorio ===
+
+USERNAME         PASSWORD_VERSIONS PROFILE
+---------------- ----------------- ----------------------
+ANA              11G 12C           PERFIL_CONFIDENCIAL
+APP_RIESGO       11G 12C           PERFIL_CONFIDENCIAL
+AUDITOR_LAB      11G 12C           PERFIL_CONFIDENCIAL
+JUAN             11G 12C           PERFIL_CONFIDENCIAL
+SOPORTE_LAB      11G 12C           PERFIL_CONFIDENCIAL
+
+5 rows selected.
+
+=== Parámetros relacionados ===
+
+PARAMETER_NAME                 PARAMETER_VALUE
+------------------------------ ------------------------------
+resource_limit                 TRUE
+sec_max_failed_login_attempts  3
+
+2 rows selected.
+
+=== Resultado ===
+
+RESULTADO
+------------
+CUMPLE
+
+1 row selected.
+

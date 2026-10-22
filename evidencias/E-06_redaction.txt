@@ -1,0 +1,55 @@
+== Evidencia: E-06_redaction
+== Script   : sql/10_lab_setup/06_redaction.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:42:30 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== 1. Política base: tarjeta enmascarada para todos (expresión 1=1) ===
+
+PL/SQL procedure successfully completed.
+
+=== 2. Expresión con nombre: "la sesión NO tiene el rol VENDEDORES" ===
+
+PL/SQL procedure successfully completed.
+
+=== 3. Cédula: enmascarada salvo para vendedores (formato 1-2345-6789) ===
+
+PL/SQL procedure successfully completed.
+
+=== 4. Correo: se oculta el nombre de usuario salvo para vendedores ===
+
+PL/SQL procedure successfully completed.
+
+=== Verificación ===
+
+OBJECT_OWNER   OBJECT_NAME              POLICY_NAME                EXPRESSION                                         ENA
+-------------- ------------------------ -------------------------- -------------------------------------------------- ---
+VENTAS_LAB     CLIENTES                 RED_CLIENTES_DATOS_PERSONA 1=1                                                YES
+                                        LES
+
+
+1 row selected.
+
+
+OBJECT_OWNER   OBJECT_NAME              COLUMN_NAME      FUNCTION_TYPE          FUNCTION_PARAMETERS
+-------------- ------------------------ ---------------- ---------------------- ------------------------------------
+VENTAS_LAB     CLIENTES                 CEDULA           PARTIAL REDACTION      VFVVVVFVVVV,V-VVVV-VVVV,*,1,5
+VENTAS_LAB     CLIENTES                 CORREO           REGEXP REDACTION
+VENTAS_LAB     CLIENTES                 TARJETA          PARTIAL REDACTION      VVVVFVVVVFVVVVFVVVV,VVVV-VVVV-VVVV-V
+                                                                                VVV,*,1,12
+
+
+3 rows selected.
+
+
+POLICY_EXPRESSION_NAME   EXPRESSION
+------------------------ --------------------------------------------------
+EXPR_NO_VENDEDOR         SYS_CONTEXT('SYS_SESSION_ROLES', 'VENDEDORES') = '
+                         FALSE'
+
+EXPR_NO_VENDEDOR         SYS_CONTEXT('SYS_SESSION_ROLES', 'VENDEDORES') = '
+                         FALSE'
+
+
+2 rows selected.
+

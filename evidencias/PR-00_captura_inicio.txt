@@ -1,0 +1,16 @@
+== Evidencia: PR-00_captura_inicio
+== Script   : sql/30_pruebas/PR-00_iniciar_captura_privilegios.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:42:41 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+
+PL/SQL procedure successfully completed.
+
+
+CAPTURE        TYPE             E
+-------------- ---------------- -
+CAP_LAB_CONF   CONTEXT          Y
+
+1 row selected.
+

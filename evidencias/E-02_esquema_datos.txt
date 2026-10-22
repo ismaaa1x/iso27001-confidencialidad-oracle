@@ -1,0 +1,88 @@
+== Evidencia: E-02_esquema_datos
+== Script   : sql/10_lab_setup/02_esquema_datos.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:42:22 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== 1. Tablespace cifrado (TDE, AES256) ===
+
+Tablespace created.
+
+=== 2. Tablespace SIN cifrar (solo para comparar en PR-15) ===
+
+Tablespace created.
+
+=== 3. Esquemas sin contraseña (nadie puede iniciar sesión con ellos) ===
+
+User created.
+
+
+User created.
+
+
+User created.
+
+=== 4. Tablas de negocio (en el tablespace cifrado) ===
+
+Table created.
+
+
+Table created.
+
+=== 5. Datos ficticios: 20 clientes repartidos entre JUAN y ANA ===
+
+20 rows created.
+
+
+20 rows created.
+
+
+Commit complete.
+
+=== 6. Procedimiento de negocio (equivale al "sp01" de la pizarra) ===
+
+Procedure created.
+
+=== 7. Tablas para la prueba comparativa de TDE (PR-15) ===
+
+Table created.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Commit complete.
+
+=== Verificación: ubicación y cifrado de los tablespaces ===
+
+TABLESPACE_NAME  ENC STATUS
+---------------- --- --------------
+TS_CONFIDENCIAL  YES ONLINE
+TS_SIN_CIFRAR    NO  ONLINE
+
+2 rows selected.
+
+
+OWNER          TABLE_NAME               TABLESPACE_NAME    NUM_ROWS
+-------------- ------------------------ ---------------- ----------
+VENTAS_LAB     CLIENTES                 TS_CONFIDENCIAL
+VENTAS_LAB     PRUEBA_TDE_CIFRADO       TS_CONFIDENCIAL
+VENTAS_LAB     PRUEBA_TDE_PLANO         TS_SIN_CIFRAR
+VENTAS_LAB     VENTAS                   TS_CONFIDENCIAL
+
+4 rows selected.
+
+
+VENDEDOR     CLIENTES
+---------- ----------
+ANA                10
+JUAN               10
+
+2 rows selected.
+

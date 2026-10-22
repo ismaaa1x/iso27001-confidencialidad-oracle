@@ -1,0 +1,70 @@
+== Evidencia: VC-13_respaldo
+== Script   : sql/20_verificacion/VC-13_respaldo.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:08 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== (a) Opción habilitada y configuración de RMAN ===
+
+PARAMETER                                                        VALUE
+---------------------------------------------------------------- ----------------------------------------------------------------
+Backup Encryption                                                TRUE
+
+1 row selected.
+
+
+NAME
+-----------------------------------------------------------------
+VALUE
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ENCRYPTION ALGORITHM
+'AES256'
+
+ENCRYPTION FOR DATABASE
+ON
+
+
+2 rows selected.
+
+=== (b) Archivos del keystore (incluye respaldos ewallet_*_antes_clave_maestra.p12) ===
+total 20
+-rw------- 1 oracle oinstall 5488 Oct 22 05:15 cwallet.sso
+-rw------- 1 oracle oinstall 5443 Oct 22 05:15 ewallet.p12
+-rw------- 1 oracle oinstall 2563 Oct 22 05:15 ewallet_2026102205154243_antes_clave_maestra.p12
+
+=== (c) Directorio de exportación y quién puede usarlo ===
+
+OBJECT_NAME              DESCRIPTION
+------------------------ --------------------------------------------------
+DATA_PUMP_DIR            /opt/oracle/admin/FREE/dpdump/48BDC2B076280818E063
+                         0800580A3900
+
+
+1 row selected.
+
+
+GRANTEE          PRIVILEGE
+---------------- ------------------------
+EXP_FULL_DATABAS READ
+E
+
+EXP_FULL_DATABAS WRITE
+E
+
+IMP_FULL_DATABAS READ
+E
+
+IMP_FULL_DATABAS WRITE
+E
+
+
+4 rows selected.
+
+=== Resultado ===
+
+A_RMAN_CIFRADO A_OPCION                                                         C_CONCESIONES_INDEBIDAS RESULTADO
+-------------- ---------------------------------------------------------------- ----------------------- ------------
+             1 TRUE                                                                                   0 CUMPLE
+
+1 row selected.
+

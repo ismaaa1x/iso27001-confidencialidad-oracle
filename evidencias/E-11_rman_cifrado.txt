@@ -1,0 +1,24 @@
+== Evidencia: E-11_rman_cifrado   Fecha: 2026-10-21 23:42:35 -0600
+Version 23.26.1.0.0
+connected to target database: FREE (DBID=1495006740)
+RMAN> CONFIGURE ENCRYPTION FOR DATABASE ON;
+using target database control file instead of recovery catalog
+old RMAN configuration parameters:
+CONFIGURE ENCRYPTION FOR DATABASE ON;
+new RMAN configuration parameters:
+CONFIGURE ENCRYPTION FOR DATABASE ON;
+new RMAN configuration parameters are successfully stored
+RMAN> CONFIGURE ENCRYPTION ALGORITHM 'AES256';
+old RMAN configuration parameters:
+CONFIGURE ENCRYPTION ALGORITHM 'AES256';
+new RMAN configuration parameters:
+CONFIGURE ENCRYPTION ALGORITHM 'AES256';
+new RMAN configuration parameters are successfully stored
+RMAN> SHOW ENCRYPTION FOR DATABASE;
+RMAN configuration parameters for database with db_unique_name FREE are:
+CONFIGURE ENCRYPTION FOR DATABASE ON;
+RMAN> SHOW ENCRYPTION ALGORITHM;
+RMAN configuration parameters for database with db_unique_name FREE are:
+CONFIGURE ENCRYPTION ALGORITHM 'AES256';
+RMAN> 
+Recovery Manager complete.

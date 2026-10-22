@@ -1,0 +1,148 @@
+== Evidencia: VC-14_registro_eventos_DESPUES
+== Script   : sql/20_verificacion/VC-14_registro_eventos.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:20 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== (a) Políticas habilitadas ===
+
+POLICY_NAME                ENABLED_OPTION ENTITY_NAME  SUC FAI
+-------------------------- -------------- ------------ --- ---
+POL_CONF_ACCESO_DATOS      BY USER        ALL USERS    YES YES
+POL_CONF_CAMBIOS_CONTROLES BY USER        ALL USERS    YES YES
+POL_CONF_CAMBIOS_REGLAS    BY USER        ALL USERS    YES YES
+POL_CONF_GESTION_ACCESOS   BY USER        ALL USERS    YES YES
+POL_CONF_PRIVILEGIOS_AMPLI BY USER        ALL USERS    YES YES
+OS
+
+
+5 rows selected.
+
+
+OBJECT_SCHEMA  OBJECT_NAME              POLICY_NAME                ENA
+-------------- ------------------------ -------------------------- ---
+VENTAS_LAB     CLIENTES                 FGA_CONSULTA_TARJETA       YES
+
+1 row selected.
+
+=== (b) Eventos del laboratorio de las últimas 24 horas (resumen) ===
+
+DBUSERNAME     ACTION_NAME      OBJECT_NAME              RETURN_CODE    EVENTOS
+-------------- ---------------- ------------------------ ----------- ----------
+ANA            EXECUTE          REGISTRAR_VENTA                    0          2
+ANA            SELECT           CLIENTES                           0          6
+APP_RIESGO     LOGON                                           28000          2
+APP_RIESGO     SELECT           CLIENTES                           0          6
+APP_RIESGO     SELECT           REGLAS_ACCESO                      0          2
+AUDITOR_LAB    CREATE AUDIT POL POL_AUDITOR_INTENTO            41732          2
+               ICY
+
+AUDITOR_LAB    NOAUDIT          POL_CONF_ACCESO_DATOS           1031          2
+AUDITOR_LAB    SELECT           CLIENTES                        2004          2
+JUAN           ALTER USER       JUAN                           28003          6
+JUAN           DELETE           CLIENTES                        2004          2
+JUAN           EXECUTE          REGISTRAR_VENTA                    0          4
+JUAN           INSERT           VENTAS                             0          2
+JUAN           INSERT           VENTAS                          2004          2
+JUAN           SELECT           CLIENTES                           0         12
+JUAN           SELECT           VENTAS                             0          2
+JUAN           UPDATE           CLIENTES                        2004          2
+PRUEBA_BLOQUEO LOGON                                            1017          6
+PRUEBA_BLOQUEO LOGON                                           28000          2
+SOPORTE_LAB    SELECT           CLIENTES                           0          6
+SOPORTE_LAB    SELECT           VENTAS                          2004          2
+
+20 rows selected.
+
+=== (b) Detalle: la "estructura" de la pizarra (día, hora, usuario, sesión, SQL) ===
+
+EVENT_TIMESTAMP            DBUSERNAME      SESSIONID USERHOST                                                                                                                         ACTION_NAME
+-------------------------- -------------- ---------- -------------------------------------------------------------------------------------------------------------------------------- ----------------
+OBJECT_NAME              RETURN_CODE SQL_TEXT
+------------------------ ----------- ------------------------------------------------------------
+2026-10-22 05:28:58        JUAN           2.9768E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT vendedor, COUNT(*) AS filas FROM ventas_lab.clientes
+
+
+2026-10-22 05:28:58        JUAN           2.9768E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT id_cliente, nombre, vendedor FROM ventas_lab.clientes
+
+
+2026-10-22 05:29:01        JUAN           2.9780E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT id_cliente, cedula, correo, tarjeta FROM ventas_lab.c
+
+
+2026-10-22 05:29:01        JUAN           2.9780E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT id_cliente, cedula, correo, tarjeta FROM ventas_lab.c
+
+
+2026-10-22 05:29:02        SOPORTE_LAB    2.9786E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT COUNT(*) AS filas FROM ventas_lab.clientes
+
+
+2026-10-22 05:29:02        SOPORTE_LAB    2.9786E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT id_cliente, nombre, cedula, correo, tarjeta, vendedor
+
+
+2026-10-22 05:29:02        SOPORTE_LAB    2.9786E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT id_cliente, nombre, cedula, correo, tarjeta, vendedor
+
+
+2026-10-22 05:29:04        JUAN           2.9792E+16 a76f8a45041e                                                                                                                     UPDATE
+CLIENTES                        2004 UPDATE ventas_lab.clientes SET correo = 'otro@correo-fictici
+
+
+2026-10-22 05:29:04        JUAN           2.9792E+16 a76f8a45041e                                                                                                                     DELETE
+CLIENTES                        2004 DELETE FROM ventas_lab.clientes WHERE id_cliente = 1
+
+
+2026-10-22 05:29:05        JUAN           2.9798E+16 a76f8a45041e                                                                                                                     INSERT
+VENTAS                          2004 INSERT INTO ventas_lab.ventas (id_cliente, vendedor, monto)
+
+
+2026-10-22 05:29:05        JUAN           2.9798E+16 a76f8a45041e                                                                                                                     SELECT
+VENTAS                             0 SELECT vendedor, COUNT(*) AS ventas, SUM(monto) AS total FRO
+
+
+2026-10-22 05:29:05        JUAN           2.9798E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT VENDEDOR FROM VENTAS_LAB.CLIENTES WHERE ID_CLIENTE =
+
+
+2026-10-22 05:29:05        JUAN           2.9798E+16 a76f8a45041e                                                                                                                     SELECT
+CLIENTES                           0 SELECT VENDEDOR FROM VENTAS_LAB.CLIENTES WHERE ID_CLIENTE =
+
+
+2026-10-22 05:29:05        JUAN           2.9798E+16 a76f8a45041e                                                                                                                     INSERT
+VENTAS                             0 INSERT INTO VENTAS_LAB.VENTAS (ID_CLIENTE, VENDEDOR, MONTO)
+
+
+2026-10-22 05:29:07        SOPORTE_LAB    2.9806E+16 a76f8a45041e                                                                                                                     SELECT
+VENTAS                          2004 SELECT COUNT(*) FROM ventas_lab.ventas
+
+
+15 rows selected.
+
+=== (b) Registros de Fine-Grained Auditing (consultas a TARJETA) ===
+
+DBUSERNAME     FGA_POLICY_N    EVENTOS
+-------------- ------------ ----------
+JUAN           FGA_CONSULTA          2
+               _TARJETA
+
+SOPORTE_LAB    FGA_CONSULTA          2
+               _TARJETA
+
+SYSTEM         FGA_CONSULTA          4
+               _TARJETA
+
+
+3 rows selected.
+
+=== Resultado ===
+
+A_POLITICAS      A_FGA B_USUARIOS_CON_REGISTROS B_RECHAZOS RESULTADO
+----------- ---------- ------------------------ ---------- ------------
+          5          1                        3         30 CUMPLE
+
+1 row selected.
+

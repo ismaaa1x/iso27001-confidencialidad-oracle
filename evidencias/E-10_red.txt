@@ -1,0 +1,12 @@
+== Evidencia: E-10_red   Fecha: 2026-10-21 23:42:39 -0600
+El cifrado ya estaba configurado
+--- sqlnet.ora actual del servidor ---
+NAMES.DIRECTORY_PATH= (TNSNAMES, EZCONNECT, HOSTNAME)
+DISABLE_OOB=ON
+SQLNET.EXPIRE_TIME=3
+SQLNET.ENCRYPTION_SERVER = REQUIRED
+SQLNET.ENCRYPTION_TYPES_SERVER = (AES256)
+SQLNET.CRYPTO_CHECKSUM_SERVER = REQUIRED
+SQLNET.CRYPTO_CHECKSUM_TYPES_SERVER = (SHA256)
+--- Puertos publicados por el contenedor (docker port) ---
+1521/tcp -> 127.0.0.1:1522

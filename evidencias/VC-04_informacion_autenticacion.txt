@@ -1,0 +1,39 @@
+== Evidencia: VC-04_informacion_autenticacion
+== Script   : sql/20_verificacion/VC-04_informacion_autenticacion.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:47:52 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== Parámetros de contraseña por perfil ===
+
+PROFILE                RESOURCE_NAME              LIMIT
+---------------------- -------------------------- --------------------------------
+DEFAULT                FAILED_LOGIN_ATTEMPTS      10
+DEFAULT                INACTIVE_ACCOUNT_TIME      365
+DEFAULT                PASSWORD_GRACE_TIME        7
+DEFAULT                PASSWORD_LIFE_TIME         180
+DEFAULT                PASSWORD_LOCK_TIME         1
+DEFAULT                PASSWORD_REUSE_MAX         UNLIMITED
+DEFAULT                PASSWORD_REUSE_TIME        UNLIMITED
+DEFAULT                PASSWORD_ROLLOVER_TIME     0
+DEFAULT                PASSWORD_VERIFY_FUNCTION   NULL
+PERFIL_CONFIDENCIAL    FAILED_LOGIN_ATTEMPTS      3
+PERFIL_CONFIDENCIAL    INACTIVE_ACCOUNT_TIME      90
+PERFIL_CONFIDENCIAL    PASSWORD_GRACE_TIME        7
+PERFIL_CONFIDENCIAL    PASSWORD_LIFE_TIME         90
+PERFIL_CONFIDENCIAL    PASSWORD_LOCK_TIME         .0416
+PERFIL_CONFIDENCIAL    PASSWORD_REUSE_MAX         5
+PERFIL_CONFIDENCIAL    PASSWORD_REUSE_TIME        365
+PERFIL_CONFIDENCIAL    PASSWORD_ROLLOVER_TIME     DEFAULT
+PERFIL_CONFIDENCIAL    PASSWORD_VERIFY_FUNCTION   ORA12C_STRONG_VERIFY_FUNCTION
+
+18 rows selected.
+
+=== Resultado ===
+
+PERFIL_CONFIDENCIAL_OK PERFIL_DEFAULT_OK RESULTADO
+---------------------- ----------------- ------------
+                     1                 0 PARCIAL
+
+1 row selected.
+

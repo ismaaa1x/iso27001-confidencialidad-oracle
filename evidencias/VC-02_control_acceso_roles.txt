@@ -1,0 +1,37 @@
+== Evidencia: VC-02_control_acceso_roles
+== Script   : sql/20_verificacion/VC-02_control_acceso_roles.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:47:48 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== Privilegios de objeto sobre los esquemas de negocio ===
+
+GRANTEE          TIPO    OWNER          TABLE_NAME               PRIVILEGE
+---------------- ------- -------------- ------------------------ ------------------------
+SOPORTE_CONSULTA ROL     VENTAS_LAB     CLIENTES                 SELECT
+VENDEDORES       ROL     VENTAS_LAB     CLIENTES                 SELECT
+VENDEDORES       ROL     VENTAS_LAB     REGISTRAR_VENTA          EXECUTE
+VENDEDORES       ROL     VENTAS_LAB     VENTAS                   SELECT
+
+4 rows selected.
+
+=== Miembros de cada rol de negocio ===
+
+ROLE                 GRANTEE
+-------------------- ----------------
+SOPORTE_CONSULTA     SOPORTE_LAB
+SOPORTE_CONSULTA     SYSTEM
+VENDEDORES           ANA
+VENDEDORES           JUAN
+VENDEDORES           SYSTEM
+
+5 rows selected.
+
+=== Resultado ===
+
+  A_PUBLIC DIRECTOS_A_USUARIOS RESULTADO
+---------- ------------------- ------------
+         0                   0 CUMPLE
+
+1 row selected.
+

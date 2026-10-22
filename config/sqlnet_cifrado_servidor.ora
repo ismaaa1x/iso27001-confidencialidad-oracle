@@ -1,0 +1,23 @@
+# =====================================================================
+# Fragmento para el sqlnet.ora DEL SERVIDOR (dentro del contenedor)
+# ---------------------------------------------------------------------
+# Propósito : Exigir cifrado e integridad en toda conexión de red
+#             (A.8.20, A.8.5; tarea T13; riesgo R-CONF-06).
+# Mecanismo : Native Network Encryption (NNE) de Oracle Net. Disponible en
+#             todas las ediciones (ya no forma parte de Advanced Security).
+#             En 23ai/26ai se retiraron los algoritmos débiles (DES, 3DES,
+#             RC4, MD5); se usan AES256 y SHA256.
+# Nota      : Oracle recomienda TLS como objetivo a largo plazo (permite
+#             autenticar el servidor con certificados). TLS requiere wallet
+#             de certificados y un listener TCPS; queda documentado como
+#             mejora (fase Actuar). NNE cifra el canal pero no autentica
+#             al servidor.
+# Aplicación: herramientas/aplicar_cifrado_red.sh (respalda el original).
+# Equivalencia: el ejemplo pg_hba.conf del enunciado es de PostgreSQL; en
+#             Oracle el control de red se configura aquí (sqlnet.ora) y en
+#             listener.ora.
+# =====================================================================
+SQLNET.ENCRYPTION_SERVER = REQUIRED
+SQLNET.ENCRYPTION_TYPES_SERVER = (AES256)
+SQLNET.CRYPTO_CHECKSUM_SERVER = REQUIRED
+SQLNET.CRYPTO_CHECKSUM_TYPES_SERVER = (SHA256)

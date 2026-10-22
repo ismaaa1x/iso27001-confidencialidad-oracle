@@ -1,0 +1,50 @@
+== Evidencia: PR-12_bloqueo
+== Script   : sql/30_pruebas/PR-12_bloqueo_intentos.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:58 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-12.1-3 Esperado: ORA-01017 tres veces
+ERROR:
+ORA-01017: invalid credential or not authorized; logon denied
+Help: https://docs.oracle.com/error-help/db/ora-01017/
+
+
+ERROR:
+ORA-01017: invalid credential or not authorized; logon denied
+Help: https://docs.oracle.com/error-help/db/ora-01017/
+
+
+ERROR:
+ORA-01017: invalid credential or not authorized; logon denied
+Help: https://docs.oracle.com/error-help/db/ora-01017/
+
+
+>>> PR-12.4 Esperado: ORA-28000 con la contraseña CORRECTA (cuenta bloqueada)
+ERROR:
+ORA-28000: The account is locked; login denied.
+Help: https://docs.oracle.com/error-help/db/ora-28000/
+
+
+>>> Estado de la cuenta y registros de auditoría (como SYSTEM)
+
+USERNAME         ACCOUNT_STATUS     BLOQUEADA_DESDE
+---------------- ------------------ -------------------
+PRUEBA_BLOQUEO   LOCKED(TIMED)      2026-10-22 05:43:01
+
+1 row selected.
+
+
+EVENT_TIMESTAMP            DBUSERNAME     ACTION_NAME      RETURN_CODE
+-------------------------- -------------- ---------------- -----------
+05:42:59                   PRUEBA_BLOQUEO LOGON                   1017
+05:43:00                   PRUEBA_BLOQUEO LOGON                   1017
+05:43:01                   PRUEBA_BLOQUEO LOGON                   1017
+05:43:01                   PRUEBA_BLOQUEO LOGON                  28000
+
+4 rows selected.
+
+>>> Restaurar: desbloquear la cuenta de prueba
+
+User altered.
+

@@ -1,0 +1,528 @@
+{
+ "meta": {
+  "titulo": "Controles ISO/IEC 27001:2022 para la confidencialidad en la administración de bases de datos Oracle",
+  "curso": "Administración de Bases de Datos",
+  "escuela": "Escuela de Informática, Universidad Nacional de Costa Rica",
+  "ciclo": "II Ciclo 2026",
+  "profesor": "Johnny Villalobos Murillo",
+  "estudiante": "Ismael Rojas Herrera",
+  "motor": "Oracle AI Database 26ai Free, Release 23.26.1.0.0 (contenedor Docker oficial, PDB FREEPDB1)",
+  "aviso": "Este artefacto NO está conectado a Oracle. Presenta información y evidencias registradas al ejecutar los scripts del repositorio. Los datos del laboratorio son ficticios. No constituye una certificación ISO."
+ },
+ "escala": {
+  "probabilidad": [
+   [
+    "1",
+    "Raro: requiere varias fallas simultáneas"
+   ],
+   [
+    "2",
+    "Improbable: requiere acceso interno y conocimiento especial"
+   ],
+   [
+    "3",
+    "Posible: la configuración por defecto lo permite si no se corrige"
+   ],
+   [
+    "4",
+    "Probable: error común de administración o práctica habitual"
+   ],
+   [
+    "5",
+    "Casi seguro: ocurre sin controles en uso normal"
+   ]
+  ],
+  "impacto": [
+   [
+    "1",
+    "Dato público o sin valor"
+   ],
+   [
+    "2",
+    "Dato interno sin datos personales"
+   ],
+   [
+    "3",
+    "Datos personales de pocos registros"
+   ],
+   [
+    "4",
+    "Datos personales masivos (Ley 8968)"
+   ],
+   [
+    "5",
+    "Datos sensibles o financieros masivos, con obligación de notificar"
+   ]
+  ],
+  "niveles": "Nivel = P × I. Bajo 1–4 · Medio 5–9 · Alto 10–15 · Crítico 16–25. Riesgo inherente: sin controles. Riesgo residual: con los controles aplicados y verificados en el laboratorio."
+ },
+ "riesgos": [
+  {
+   "id": "R-CONF-01",
+   "activo": "Tabla CLIENTES (datos personales)",
+   "amenaza": "Abuso de privilegios",
+   "vulnerabilidad": "Roles amplios, privilegios ANY o grants a PUBLIC",
+   "escenario": "Una cuenta de aplicación con SELECT ANY TABLE extrae todos los clientes",
+   "p": 4,
+   "i": 5,
+   "justificacion": "Conceder roles amplios «para que funcione» es un error frecuente de administración y afecta a todos los registros",
+   "controles": [
+    "A.5.15",
+    "A.5.18",
+    "A.8.2",
+    "A.8.3"
+   ],
+   "p_res": 2,
+   "i_res": 5,
+   "justificacion_res": "VPD deniega por defecto, Redaction oculta la tarjeta, VC-07 detecta privilegios ANY y A-01 los corrigió. Persiste el riesgo del DBA (PR-19)."
+  },
+  {
+   "id": "R-CONF-02",
+   "activo": "Cuentas y credenciales",
+   "amenaza": "Suplantación de identidad",
+   "vulnerabilidad": "Contraseñas débiles o compartidas, sin bloqueo ni cierre de sesiones inactivas",
+   "escenario": "Se adivina la contraseña de JUAN (igual al usuario, como en la pizarra) o se usa una sesión desatendida",
+   "p": 4,
+   "i": 4,
+   "justificacion": "El perfil DEFAULT no tiene función de verificación ni IDLE_TIME (E-00)",
+   "controles": [
+    "A.5.16",
+    "A.5.17",
+    "A.8.5"
+   ],
+   "p_res": 2,
+   "i_res": 4,
+   "justificacion_res": "El perfil confidencial rechaza contraseñas débiles (PR-11), bloquea tras 3 intentos (PR-12) y cierra sesiones inactivas (PR-13). El perfil DEFAULT sigue sin endurecer (VC-04 = PARCIAL)."
+  },
+  {
+   "id": "R-CONF-03",
+   "activo": "Datafiles, respaldos y exports",
+   "amenaza": "Copia no autorizada",
+   "vulnerabilidad": "Archivos sin cifrar",
+   "escenario": "Se copia un datafile o un archivo .dmp y se lee fuera de la base",
+   "p": 3,
+   "i": 5,
+   "justificacion": "Requiere acceso al servidor o a los medios, pero evita todos los permisos de la base",
+   "controles": [
+    "A.8.12",
+    "A.8.13",
+    "A.8.10",
+    "A.5.33"
+   ],
+   "p_res": 2,
+   "i_res": 5,
+   "justificacion_res": "TDE (PR-15) y RMAN cifrado (PR-16) impiden leer datafiles y respaldos físicos. Pero un export de Data Pump guarda en claro incluso los datos TDE (ORA-39173) y Free no permite cifrarlo (ORA-00439): si un export sale del servidor, el impacto sigue siendo máximo. Keystore AUTO_LOGIN en el mismo servidor (P-04)."
+  },
+  {
+   "id": "R-CONF-04",
+   "activo": "Copias DEV/TEST y consultas de soporte",
+   "amenaza": "Exposición a personal no autorizado",
+   "vulnerabilidad": "Datos reales copiados a ambientes con menos controles",
+   "escenario": "Se clona el PDB a desarrollo con tarjetas y cédulas reales",
+   "p": 4,
+   "i": 4,
+   "justificacion": "Clonar producción sin enmascarar es una práctica común; los desarrolladores no necesitan datos reales",
+   "controles": [
+    "A.8.11",
+    "A.5.12",
+    "A.8.3"
+   ],
+   "p_res": 1,
+   "i_res": 4,
+   "justificacion_res": "La copia DEV tiene 0 coincidencias con datos reales (VC-11) y soporte ve los datos enmascarados (PR-04)."
+  },
+  {
+   "id": "R-CONF-05",
+   "activo": "Rastro de auditoría",
+   "amenaza": "Fuga no detectada o encubierta",
+   "vulnerabilidad": "Sin políticas que registren el acceso a datos sensibles; rastro modificable",
+   "escenario": "Alguien consulta datos de clientes y no queda registro de quién, cuándo ni qué",
+   "p": 4,
+   "i": 4,
+   "justificacion": "La auditoría unificada está activa por defecto, pero sin políticas sobre los objetos sensibles no registra esos SELECT",
+   "controles": [
+    "A.8.15",
+    "A.5.33",
+    "A.8.2"
+   ],
+   "p_res": 2,
+   "i_res": 4,
+   "justificacion_res": "Políticas sobre datos, privilegios y controles (VC-14), auditor separado (PR-08/PR-09). Sin SIEM externo, SYS aún puede actuar sobre el rastro."
+  },
+  {
+   "id": "R-CONF-06",
+   "activo": "Tráfico cliente-servidor",
+   "amenaza": "Interceptación en la red",
+   "vulnerabilidad": "Tráfico sin cifrar o listener expuesto",
+   "escenario": "Se captura en la red una consulta con datos de clientes",
+   "p": 3,
+   "i": 4,
+   "justificacion": "Sin cifrado de red el tráfico SQL viaja en claro",
+   "controles": [
+    "A.8.20",
+    "A.8.5"
+   ],
+   "p_res": 1,
+   "i_res": 4,
+   "justificacion_res": "El servidor exige AES256/SHA256 (VC-15) y rechaza clientes sin cifrado (PR-18); puerto solo en localhost. Falta TLS con certificado (P-03)."
+  }
+ ],
+ "tareas": [
+  {
+   "id": "T01",
+   "tarea": "Gestión de usuarios",
+   "implementacion": "Una cuenta por persona; esquemas dueños sin autenticación (NO AUTHENTICATION); cuentas obsoletas bloqueadas",
+   "demostrable": "Sí",
+   "scripts": "03, VC-03, A-01"
+  },
+  {
+   "id": "T02",
+   "tarea": "Gestión de privilegios y roles",
+   "implementacion": "Roles por función (VENDEDORES, SOPORTE_CONSULTA); sin ANY ni PUBLIC; cambios solo por procedimiento",
+   "demostrable": "Sí",
+   "scripts": "03, VC-02, VC-07, PR-05, PR-06"
+  },
+  {
+   "id": "T03",
+   "tarea": "Revisión periódica de accesos",
+   "implementacion": "Privilege Analysis (DBMS_PRIVILEGE_CAPTURE): privilegios usados y no usados",
+   "demostrable": "Sí",
+   "scripts": "PR-00, PR-99, VC-05"
+  },
+  {
+   "id": "T04",
+   "tarea": "Autenticación y perfiles",
+   "implementacion": "Perfil con verificación de complejidad, bloqueo por intentos, vigencia e IDLE_TIME",
+   "demostrable": "Sí",
+   "scripts": "03, VC-04, VC-09, PR-11, PR-12, PR-13"
+  },
+  {
+   "id": "T05",
+   "tarea": "Gestión de cuentas privilegiadas",
+   "implementacion": "Auditor separado (AUDIT_VIEWER sin AUDIT_ADMIN); auditoría del uso de privilegios amplios y de cambios a reglas",
+   "demostrable": "Parcial",
+   "limitacion": "Una sola persona administra el laboratorio; Database Vault queda propuesto",
+   "scripts": "07, PR-08, PR-09, PR-19, A-02"
+  },
+  {
+   "id": "T06",
+   "tarea": "Cifrado TDE",
+   "implementacion": "Keystore de software, clave maestra AES256, tablespace cifrado TS_CONFIDENCIAL",
+   "demostrable": "Sí",
+   "limitacion": "En Free no hay cifrado en línea de tablespaces existentes; keystore AUTO_LOGIN local",
+   "scripts": "01, 02, VC-12, PR-15"
+  },
+  {
+   "id": "T07",
+   "tarea": "Enmascaramiento",
+   "implementacion": "Dinámico con Data Redaction (tarjeta, cédula, correo); estático con SQL para la copia DEV",
+   "demostrable": "Sí",
+   "limitacion": "El Data Masking Pack de Enterprise Manager no se usa; se implementa el mismo principio con SQL",
+   "scripts": "06, 09, VC-11, PR-03, PR-04"
+  },
+  {
+   "id": "T08",
+   "tarea": "Restricción por filas (VPD)",
+   "implementacion": "DBMS_RLS con reglas por usuario y denegación por defecto",
+   "demostrable": "Sí",
+   "scripts": "05, VC-08, PR-01, PR-02, PR-10"
+  },
+  {
+   "id": "T09",
+   "tarea": "Respaldos cifrados",
+   "implementacion": "RMAN con cifrado AES256 por defecto (keystore TDE); respaldo del keystore; directorio de exportación restringido",
+   "demostrable": "Parcial",
+   "limitacion": "Oracle Free no permite cifrar exports de Data Pump (ORA-00439); se documenta openssl como alternativa externa",
+   "scripts": "10_rman_cifrado.sh, PR-16, VC-13"
+  },
+  {
+   "id": "T10",
+   "tarea": "Auditoría",
+   "implementacion": "4 políticas de auditoría unificada + FGA sobre TARJETA; política adicional tras Actuar",
+   "demostrable": "Sí",
+   "scripts": "07, VC-14, PR-14, A-02"
+  },
+  {
+   "id": "T11",
+   "tarea": "Gestión de logs",
+   "implementacion": "Retención de 90 días y job de purga controlada; límites de redo/LogMiner documentados",
+   "demostrable": "Parcial",
+   "limitacion": "No hay SIEM real; envío por syslog propuesto (P-05)",
+   "scripts": "08, VC-06"
+  },
+  {
+   "id": "T12",
+   "tarea": "Parcheo",
+   "implementacion": "Registro de la versión (V$VERSION, DBA_REGISTRY_SQLPATCH) para compararla con el último Release Update",
+   "demostrable": "Parcial",
+   "limitacion": "Solo evidencia de versión; en Free el parche se aplica con una imagen nueva",
+   "scripts": "00 (E-00), A-03 P-07"
+  },
+  {
+   "id": "T13",
+   "tarea": "Listener y configuración de red",
+   "implementacion": "Cifrado nativo requerido (AES256/SHA256); puerto publicado solo en 127.0.0.1",
+   "demostrable": "Sí",
+   "limitacion": "TLS con certificados queda propuesto (P-03)",
+   "scripts": "aplicar_cifrado_red.sh, VC-15, PR-18"
+  },
+  {
+   "id": "T14",
+   "tarea": "Eliminación segura",
+   "implementacion": "DROP ... PURGE, papelera vacía, borrado de exports con shred; tablespaces INCLUDING CONTENTS AND DATAFILES",
+   "demostrable": "Parcial",
+   "limitacion": "El borrado físico de medios no se puede garantizar (SSD, capas de Docker)",
+   "scripts": "PR-17, VC-10, PR-16, 99"
+  },
+  {
+   "id": "T15",
+   "tarea": "Clones de desarrollo y pruebas",
+   "implementacion": "Copia VENTAS_DEV con enmascaramiento estático y formato preservado",
+   "demostrable": "Parcial",
+   "limitacion": "Simula el resultado del clon; no se clona el PDB completo por los límites de Free",
+   "scripts": "09, VC-11, PR-10"
+  }
+ ],
+ "controles": [
+  {
+   "id": "A.5.12",
+   "titulo": "Clasificación de la información",
+   "tema": "Organizacional",
+   "pertinencia": "Sin saber qué es confidencial no se puede decidir qué cifrar, enmascarar o auditar.",
+   "riesgos": [
+    "R-CONF-01",
+    "R-CONF-04"
+   ],
+   "tareas": [
+    "T07",
+    "T15"
+   ],
+   "implementacion": "Etiquetas [INTERNO]/[CONFIDENCIAL]/[RESTRINGIDO] en el diccionario (COMMENT ON COLUMN)",
+   "evidencia": "DBA_COL_COMMENTS (VC-01)",
+   "limitacion": "Documenta la clasificación; no protege por sí misma ni valida que sea correcta"
+  },
+  {
+   "id": "A.5.15",
+   "titulo": "Control de acceso",
+   "tema": "Organizacional",
+   "pertinencia": "Define quién puede acceder a qué; es la base del mínimo privilegio.",
+   "riesgos": [
+    "R-CONF-01"
+   ],
+   "tareas": [
+    "T02"
+   ],
+   "implementacion": "Acceso solo por roles de función; nada a PUBLIC; cambios por procedimiento",
+   "evidencia": "DBA_TAB_PRIVS, DBA_ROLE_PRIVS (VC-02); PR-05, PR-06, PR-07",
+   "limitacion": "No cubre privilegios de sistema (ver A.8.2)"
+  },
+  {
+   "id": "A.5.16",
+   "titulo": "Gestión de identidades",
+   "tema": "Organizacional",
+   "pertinencia": "Una identidad por persona permite atribuir cada acceso.",
+   "riesgos": [
+    "R-CONF-02"
+   ],
+   "tareas": [
+    "T01"
+   ],
+   "implementacion": "Cuentas individuales, esquemas NO AUTHENTICATION, sin contraseñas por defecto",
+   "evidencia": "DBA_USERS, DBA_USERS_WITH_DEFPWD (VC-03)",
+   "limitacion": "No detecta cuentas compartidas de hecho"
+  },
+  {
+   "id": "A.5.17",
+   "titulo": "Información de autenticación",
+   "tema": "Organizacional",
+   "pertinencia": "Contraseñas débiles anulan cualquier control de acceso.",
+   "riesgos": [
+    "R-CONF-02"
+   ],
+   "tareas": [
+    "T04"
+   ],
+   "implementacion": "PASSWORD_VERIFY_FUNCTION, vigencia y no reutilización",
+   "evidencia": "DBA_PROFILES (VC-04); PR-11 (ORA-28003)",
+   "limitacion": "El perfil DEFAULT (global) no se modificó"
+  },
+  {
+   "id": "A.5.18",
+   "titulo": "Derechos de acceso",
+   "tema": "Organizacional",
+   "pertinencia": "Los derechos deben revisarse y retirarse cuando ya no se necesitan.",
+   "riesgos": [
+    "R-CONF-01"
+   ],
+   "tareas": [
+    "T02",
+    "T03"
+   ],
+   "implementacion": "Privilege Analysis y revocación (A-01)",
+   "evidencia": "DBA_USED_PRIVS / DBA_UNUSED_PRIVS (VC-05)",
+   "limitacion": "Refleja solo el período capturado"
+  },
+  {
+   "id": "A.5.33",
+   "titulo": "Protección de registros",
+   "tema": "Organizacional",
+   "pertinencia": "Los registros de auditoría solo sirven si no se pueden alterar ni borrar sin control.",
+   "riesgos": [
+    "R-CONF-03",
+    "R-CONF-05"
+   ],
+   "tareas": [
+    "T10",
+    "T11"
+   ],
+   "implementacion": "AUDSYS bloqueada, auditor sin AUDIT_ADMIN, retención y purga controlada",
+   "evidencia": "DBA_AUDIT_MGMT_* (VC-06); PR-09",
+   "limitacion": "SYS puede actuar sobre el rastro; falta copia externa (SIEM)"
+  },
+  {
+   "id": "A.8.2",
+   "titulo": "Derechos de acceso privilegiado",
+   "tema": "Tecnológico",
+   "pertinencia": "Las cuentas privilegiadas pueden saltarse los controles; deben ser mínimas y vigiladas.",
+   "riesgos": [
+    "R-CONF-01",
+    "R-CONF-05"
+   ],
+   "tareas": [
+    "T05"
+   ],
+   "implementacion": "Sin DBA/ANY/EXEMPT en cuentas comunes; auditoría de SELECT ANY TABLE y de cambios a reglas",
+   "evidencia": "DBA_ROLE_PRIVS, DBA_SYS_PRIVS (VC-07); PR-10, PR-19",
+   "limitacion": "El DBA sigue pudiendo alterar reglas: se detecta, no se impide (Database Vault propuesto)"
+  },
+  {
+   "id": "A.8.3",
+   "titulo": "Restricción del acceso a la información",
+   "tema": "Tecnológico",
+   "pertinencia": "Limita el acceso a las filas y columnas que cada función necesita.",
+   "riesgos": [
+    "R-CONF-01",
+    "R-CONF-04"
+   ],
+   "tareas": [
+    "T07",
+    "T08"
+   ],
+   "implementacion": "VPD con denegación por defecto + Data Redaction",
+   "evidencia": "DBA_POLICIES (VC-08); PR-01, PR-02, PR-10",
+   "limitacion": "SYS y EXEMPT ACCESS POLICY no se ven afectados"
+  },
+  {
+   "id": "A.8.5",
+   "titulo": "Autenticación segura",
+   "tema": "Tecnológico",
+   "pertinencia": "Impide la suplantación por fuerza bruta o por sesiones abandonadas.",
+   "riesgos": [
+    "R-CONF-02",
+    "R-CONF-06"
+   ],
+   "tareas": [
+    "T04",
+    "T13"
+   ],
+   "implementacion": "FAILED_LOGIN_ATTEMPTS, PASSWORD_LOCK_TIME, IDLE_TIME, verificadores 12C",
+   "evidencia": "DBA_PROFILES, DBA_USERS (VC-09); PR-12 (ORA-28000), PR-13 (ORA-02396)",
+   "limitacion": "Sin segundo factor (MFA)"
+  },
+  {
+   "id": "A.8.10",
+   "titulo": "Eliminación de información",
+   "tema": "Tecnológico",
+   "pertinencia": "Un dato «borrado» que sigue recuperable sigue siendo un riesgo de confidencialidad.",
+   "riesgos": [
+    "R-CONF-03"
+   ],
+   "tareas": [
+    "T14"
+   ],
+   "implementacion": "PURGE, papelera vacía, shred de exports, borrado de datafiles",
+   "evidencia": "DBA_RECYCLEBIN (VC-10); PR-17, PR-16",
+   "limitacion": "No garantiza borrado físico en SSD/capas; la protección real es el cifrado"
+  },
+  {
+   "id": "A.8.11",
+   "titulo": "Enmascaramiento de datos",
+   "tema": "Tecnológico",
+   "pertinencia": "Permite usar los datos sin exponer su valor real.",
+   "riesgos": [
+    "R-CONF-04"
+   ],
+   "tareas": [
+    "T07",
+    "T15"
+   ],
+   "implementacion": "Data Redaction (dinámico) y copia DEV con valores falsos (estático)",
+   "evidencia": "REDACTION_COLUMNS y comparación DEV-producción (VC-11); PR-03, PR-04",
+   "limitacion": "Redaction no aplica a cuentas exentas (rol DBA); posible inferencia con WHERE"
+  },
+  {
+   "id": "A.8.12",
+   "titulo": "Prevención de fuga de datos",
+   "tema": "Tecnológico",
+   "pertinencia": "Evita que los datos salgan de su ámbito por copia de archivos o extracción masiva.",
+   "riesgos": [
+    "R-CONF-03",
+    "R-CONF-05"
+   ],
+   "tareas": [
+    "T06",
+    "T09",
+    "T10"
+   ],
+   "implementacion": "TDE en tablespace cifrado + RMAN cifrado + auditoría de lecturas y privilegios amplios",
+   "evidencia": "DBA_TABLESPACES, V$ENCRYPTED_TABLESPACES (VC-12); PR-15, PR-16",
+   "limitacion": "Los exports de Data Pump quedan en claro en Free; DLP completo incluye correo, USB, nube: fuera del alcance del DBA"
+  },
+  {
+   "id": "A.8.13",
+   "titulo": "Respaldo de la información",
+   "tema": "Tecnológico",
+   "pertinencia": "Un respaldo es una copia completa: debe tener la misma protección que la base.",
+   "riesgos": [
+    "R-CONF-03"
+   ],
+   "tareas": [
+    "T09"
+   ],
+   "implementacion": "RMAN cifra por defecto (AES256, keystore TDE), respaldo del keystore, directorio de exportación restringido",
+   "evidencia": "V$RMAN_CONFIGURATION, V$OPTION, listado del keystore (VC-13); PR-16",
+   "limitacion": "Exports lógicos no cifrables en Free (ORA-00439); keystore y datos en el mismo servidor; disponibilidad fuera de alcance"
+  },
+  {
+   "id": "A.8.15",
+   "titulo": "Registro (logging)",
+   "tema": "Tecnológico",
+   "pertinencia": "Sin registros no se puede detectar ni investigar un acceso indebido.",
+   "riesgos": [
+    "R-CONF-05"
+   ],
+   "tareas": [
+    "T10",
+    "T11"
+   ],
+   "implementacion": "Auditoría unificada (datos, accesos, privilegios, controles) + FGA",
+   "evidencia": "AUDIT_UNIFIED_ENABLED_POLICIES, UNIFIED_AUDIT_TRAIL (VC-14); PR-14",
+   "limitacion": "Detecta, no impide; redo/LogMiner no registran SELECT"
+  },
+  {
+   "id": "A.8.20",
+   "titulo": "Seguridad de redes",
+   "tema": "Tecnológico",
+   "pertinencia": "Los datos y credenciales viajan por la red entre cliente y servidor.",
+   "riesgos": [
+    "R-CONF-06"
+   ],
+   "tareas": [
+    "T13"
+   ],
+   "implementacion": "SQLNET.ENCRYPTION_SERVER=REQUIRED (AES256, SHA256); puerto solo local",
+   "evidencia": "V$SESSION_CONNECT_INFO, sqlnet.ora (VC-15); PR-18 (ORA-12660)",
+   "limitacion": "NNE no autentica al servidor; TLS propuesto"
+  }
+ ]
+}

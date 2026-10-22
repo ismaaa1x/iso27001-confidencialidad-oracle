@@ -1,0 +1,22 @@
+== Evidencia: PR-08_auditor_separacion
+== Script   : sql/30_pruebas/PR-08_auditor_separacion.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:52 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-08.1 Esperado: ORA-00942 (el auditor no lee datos de clientes)
+SELECT COUNT(*) FROM ventas_lab.clientes
+                                *
+ERROR at line 1:
+ORA-00942: table or view "VENTAS_LAB"."CLIENTES" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/
+
+
+>>> PR-08.2 Esperado: conteo de registros de auditoría > 0
+
+REGISTROS_AUDITORIA
+-------------------
+                357
+
+1 row selected.
+

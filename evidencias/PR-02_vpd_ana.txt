@@ -1,0 +1,28 @@
+== Evidencia: PR-02_vpd_ana
+== Script   : sql/30_pruebas/PR-02_vpd_aislamiento_ana.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:44 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-02.1 Esperado: 10 filas, solo vendedor ANA
+
+VENDEDOR        FILAS
+---------- ----------
+ANA                10
+
+1 row selected.
+
+>>> PR-02.2 Esperado: 0 filas (el cliente 1 pertenece a JUAN)
+
+no rows selected
+
+>>> PR-02.3 Esperado: ORA-20002 (cliente no visible para la vendedora)
+BEGIN ventas_lab.registrar_venta(p_id_cliente => 1, p_monto => 5000); END;
+
+*
+ERROR at line 1:
+ORA-20002: Cliente inexistente o no visible para el vendedor
+ORA-06512: at "VENTAS_LAB.REGISTRAR_VENTA", line 19
+ORA-06512: at line 1
+
+

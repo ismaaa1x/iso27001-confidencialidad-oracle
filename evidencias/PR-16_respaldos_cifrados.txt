@@ -1,0 +1,46 @@
+== Evidencia: PR-16_respaldos_cifrados   Fecha: 2026-10-21 23:46:15 -0600
+DATA_PUMP_DIR (FREEPDB1): /opt/oracle/admin/FREE/dpdump/48BDC2B076280818E0630800580A3900
+
+>>> PR-16.1 Export de Data Pump SIN cifrar del esquema VENTAS_LAB
+    Esperado: ORA-39173 (datos TDE guardados en claro), ORA-39181 (VPD) y marcador visible
+ORA-39181: Only partial table data may be exported due to fine grain access control on "VENTAS_LAB"."CLIENTES"
+. . exported "VENTAS_LAB"."CLIENTES"                         0 KB       0 rows
+. . exported "VENTAS_LAB"."PRUEBA_TDE_CIFRADO"             5.1 KB       1 rows
+. . exported "VENTAS_LAB"."PRUEBA_TDE_PLANO"               5.1 KB       1 rows
+ORA-39181: Only partial table data may be exported due to fine grain access control on "VENTAS_LAB"."VENTAS"
+. . exported "VENTAS_LAB"."VENTAS"                           0 KB       0 rows
+ORA-39173: Encrypted data has been stored unencrypted in dump file set.
+Job "SYSTEM"."SYS_EXPORT_SCHEMA_01" completed with 2 error(s) at Thu Oct 22 05:47:04 2026 elapsed 0 00:00:43
+    coincidencias del marcador en pr16_plano.dmp: 2
+
+>>> PR-16.2 Export de Data Pump CIFRADO (ENCRYPTION=ALL, AES256)
+    Esperado en Oracle Free: ORA-00439 feature not enabled: Dump File Encryption
+ORA-39002: invalid operation
+ORA-00439: feature not enabled: Dump File Encryption
+
+>>> PR-16.3 / 16.4 Respaldos RMAN (configuración: ENCRYPTION FOR DATABASE ON, AES256)
+    RMAN> SHOW ENCRYPTION FOR DATABASE;
+    CONFIGURE ENCRYPTION FOR DATABASE ON;
+    piece handle=/tmp/pr16_rman_cifrado_0b8r89r8_11_1_1 tag=PR16_CIFRADO comment=NONE
+    Finished backup at 22-OCT-26
+    piece handle=/opt/oracle/product/26ai/dbhomeFree/dbs/c-1495006740-20261022-06 comment=NONE
+    RMAN> SET ENCRYPTION OFF;
+    piece handle=/tmp/pr16_rman_plano_0dbr89rb_13_1_1 tag=PR16_PLANO comment=NONE
+    Finished backup at 22-OCT-26
+    piece handle=/opt/oracle/product/26ai/dbhomeFree/dbs/c-1495006740-20261022-07 comment=NONE
+    piece handle=/tmp/pr16_rman_tde_sincif_0fer89re_15_1_1 tag=PR16_TDE_SIN_CIFRADO_RMAN comment=NONE
+    Finished backup at 22-OCT-26
+    piece handle=/opt/oracle/product/26ai/dbhomeFree/dbs/c-1495006740-20261022-08 comment=NONE
+    16.3a respaldo RMAN SIN cifrar de TS_SIN_CIFRAR   -> coincidencias: 1
+    16.3b respaldo RMAN CIFRADO de TS_SIN_CIFRAR      -> coincidencias: 0
+    16.4  respaldo RMAN de TS_CONFIDENCIAL (sin cifrado RMAN, bloques TDE) -> coincidencias: 0
+
+>>> PR-16.5 Alternativa para exports en Free: cifrado del .dmp con openssl (AES-256, PBKDF2)
+    archivo cifrado generado: pr16_plano.dmp.enc
+    coincidencias del marcador en pr16_plano.dmp.enc: 0
+
+>>> PR-16.6 Eliminación de los respaldos de prueba
+    Deleted 1 objects
+    Deleted 1 objects
+    Deleted 1 objects
+    archivos de prueba restantes: 0

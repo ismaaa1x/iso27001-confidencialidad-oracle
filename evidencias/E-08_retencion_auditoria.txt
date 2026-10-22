@@ -1,0 +1,32 @@
+== Evidencia: E-08_retencion_auditoria
+== Script   : sql/10_lab_setup/08_retencion_auditoria.sql
+== Modo     : sysdba-pdb
+== Fecha    : 2026-10-21 23:42:33 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+
+Session altered.
+
+=== 1. Marcar como archivado todo lo anterior a 90 días ===
+
+PL/SQL procedure successfully completed.
+
+=== 2. Job de purga diaria que respeta la fecha de archivado ===
+
+PL/SQL procedure successfully completed.
+
+=== Verificación ===
+
+AUDIT_TRAIL            LAST_ARCHIVE_TS
+---------------------- ---------------------------------------------------------------------------
+UNIFIED AUDIT TRAIL    24-JUL-26 05.42.33.941915 AM +00:00
+
+1 row selected.
+
+
+JOB_NAME                 JOB_STATUS AUDIT_TRAIL            JOB_FREQUENCY
+------------------------ ---------- ---------------------- ----------------------------------------------------------------------------------------------------
+PURGA_AUDITORIA_CONF_90D ENABLED    UNIFIED AUDIT TRAIL    FREQ=HOURLY;INTERVAL=24
+
+1 row selected.
+

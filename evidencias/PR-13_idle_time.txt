@@ -1,0 +1,24 @@
+== Evidencia: PR-13_idle_time
+== Script   : sql/30_pruebas/PR-13_idle_time.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:43:02 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-13.1 Esperado: consulta exitosa
+
+HORA_INI
+--------
+05:43:03
+
+1 row selected.
+
+>>> Esperando 180 segundos SIN actividad en la sesión...
+
+>>> PR-13.2 Esperado: ORA-02396 exceeded maximum idle time
+SELECT TO_CHAR(SYSDATE, 'HH24:MI:SS') AS hora_fin FROM dual
+*
+ERROR at line 1:
+ORA-02396: exceeded maximum idle time, please connect again
+Help: https://docs.oracle.com/error-help/db/ora-02396/
+
+

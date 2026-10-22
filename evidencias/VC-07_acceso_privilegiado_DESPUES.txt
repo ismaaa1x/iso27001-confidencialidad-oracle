@@ -1,0 +1,43 @@
+== Evidencia: VC-07_acceso_privilegiado_DESPUES
+== Script   : sql/20_verificacion/VC-07_acceso_privilegiado.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:17 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== Hallazgos: cuentas no administrativas con privilegios amplios ===
+
+no rows selected
+
+=== Información: cuentas administrativas de Oracle con rol DBA ===
+
+GRANTEE
+----------------
+GGSHAREDCAP
+SYS
+SYSTEM
+
+3 rows selected.
+
+=== Información: usuarios exentos de Redaction, directo o HEREDADO por roles ===
+(SYSTEM aparece porque el rol DBA incluye EXP_FULL_DATABASE, que tiene EXEMPT REDACTION POLICY)
+
+USERNAME         I
+---------------- -
+GGSHAREDCAP      Y
+GSMADMIN_INTERNA Y
+L
+
+GSMUSER          Y
+SYS              Y
+SYSTEM           Y
+
+5 rows selected.
+
+=== Resultado ===
+
+ HALLAZGOS RESULTADO
+---------- ------------
+         0 CUMPLE
+
+1 row selected.
+

@@ -1,0 +1,55 @@
+== Evidencia: VC-06_proteccion_registros
+== Script   : sql/20_verificacion/VC-06_proteccion_registros.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:47:55 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== (a) Cuenta dueña del rastro ===
+
+USERNAME         ACCOUNT_STATUS     AUTHENTICA
+---------------- ------------------ ----------
+AUDSYS           LOCKED             NONE
+
+1 row selected.
+
+=== (b) Quién puede administrar o leer la auditoría ===
+
+ROLE                 GRANTEE
+-------------------- ----------------
+AUDIT_ADMIN          SYS
+AUDIT_VIEWER         AUDITOR_LAB
+AUDIT_VIEWER         SYS
+
+3 rows selected.
+
+=== (c) Retención: último archivado y job de purga ===
+
+AUDIT_TRAIL            LAST_ARCHIVE_TS
+---------------------- ---------------------------------------------------------------------------
+UNIFIED AUDIT TRAIL    24-JUL-26 05.42.33.941915 AM +00:00
+
+1 row selected.
+
+
+JOB_NAME                 JOB_STATUS AUDIT_TRAIL            JOB_FREQUENCY
+------------------------ ---------- ---------------------- ----------------------------------------------------------------------------------------------------
+PURGA_AUDITORIA_CONF_90D ENABLED    UNIFIED AUDIT TRAIL    FREQ=HOURLY;INTERVAL=24
+
+1 row selected.
+
+=== Volumen actual del rastro unificado ===
+
+ REGISTROS DESDE                                                                       HASTA
+---------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+       386 22-OCT-26 04.57.19.099711 AM                                                22-OCT-26 05.47.42.530065 AM
+
+1 row selected.
+
+=== Resultado ===
+
+A_AUDSYS_PROTEGIDO B_LAB_CON_AUDIT_ADMIN C_JOBS_PURGA RESULTADO
+------------------ --------------------- ------------ ------------
+                 1                     0            1 CUMPLE
+
+1 row selected.
+

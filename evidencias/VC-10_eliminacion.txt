@@ -1,0 +1,26 @@
+== Evidencia: VC-10_eliminacion
+== Script   : sql/20_verificacion/VC-10_eliminacion.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:03 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== Parámetro de papelera ===
+
+PARAMETER_NAME                 PARAMETER_VALUE
+------------------------------ ------------------------------
+recyclebin                     on
+
+1 row selected.
+
+=== Objetos en la papelera de los esquemas con datos ===
+
+no rows selected
+
+=== Resultado ===
+
+OBJETOS_EN_PAPELERA RESULTADO
+------------------- ------------
+                  0 CUMPLE
+
+1 row selected.
+

@@ -1,0 +1,40 @@
+== Evidencia: PR-10_sobreprivilegiada
+== Script   : sql/30_pruebas/PR-10_cuenta_sobreprivilegiada.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:55 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-10.1 Esperado: 0 filas (VPD)
+
+FILAS_CLIENTES
+--------------
+             0
+
+1 row selected.
+
+>>> PR-10.2 Esperado: 20 filas, todas con datos FALSOS (copia DEV)
+
+ FILAS_DEV
+----------
+        20
+
+1 row selected.
+
+
+ID_CLIENTE NOMBRE               CEDULA       TARJETA
+---------- -------------------- ------------ -------------------
+         1 Cliente DEV 001      0-0811-0449  0000-0000-0000-0001
+         2 Cliente DEV 002      0-1622-0898  0000-0000-0000-0002
+
+2 rows selected.
+
+>>> PR-10.3 HALLAZGO esperado: la cuenta puede leer las reglas de seguridad
+
+USUARIO          ALCANCE
+---------------- ----------
+JUAN             PROPIOS
+ANA              PROPIOS
+SOPORTE_LAB      TODOS
+
+3 rows selected.
+

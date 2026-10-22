@@ -1,0 +1,36 @@
+== Evidencia: VC-03_identidades
+== Script   : sql/20_verificacion/VC-03_identidades.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:47:51 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== Cuentas no mantenidas por Oracle ===
+
+USERNAME         ACCOUNT_STATUS     PROFILE                AUTHENTICA ULTIMO_LOGIN
+---------------- ------------------ ---------------------- ---------- ----------------
+ANA              OPEN               PERFIL_CONFIDENCIAL    PASSWORD   2026-10-22 05:42
+APP_RIESGO       OPEN               PERFIL_CONFIDENCIAL    PASSWORD   2026-10-22 05:42
+AUDITOR_LAB      OPEN               PERFIL_CONFIDENCIAL    PASSWORD   2026-10-22 05:46
+JUAN             OPEN               PERFIL_CONFIDENCIAL    PASSWORD   2026-10-22 05:47
+PDBADMIN         OPEN               DEFAULT                PASSWORD
+PRUEBA_BLOQUEO   OPEN               PERFIL_CONFIDENCIAL    PASSWORD
+PRUEBA_IDLE      OPEN               PERFIL_PRUEBA_IDLE     PASSWORD   2026-10-22 05:43
+SEGURIDAD_LAB    OPEN               DEFAULT                NONE
+SOPORTE_LAB      OPEN               PERFIL_CONFIDENCIAL    PASSWORD   2026-10-22 05:42
+VENTAS_DEV       OPEN               DEFAULT                NONE
+VENTAS_LAB       OPEN               DEFAULT                NONE
+
+11 rows selected.
+
+=== (a) Cuentas con contraseña por defecto de Oracle ===
+
+no rows selected
+
+=== Resultado ===
+
+  A_DEFPWD B_ESQUEMAS_SIN_LOGIN C_FUERA_DE_PERFIL RESULTADO
+---------- -------------------- ----------------- ------------
+         0                    3                 0 CUMPLE
+
+1 row selected.
+

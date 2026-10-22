@@ -1,0 +1,121 @@
+== Evidencia: E-03_usuarios_roles_perfil
+== Script   : sql/10_lab_setup/03_usuarios_roles_perfil.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:42:25 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== 1. Perfil de seguridad para cuentas con acceso a datos confidenciales ===
+
+Profile created.
+
+=== 2. Perfil exclusivo para demostrar IDLE_TIME en pocos minutos ===
+
+Profile created.
+
+=== 3. Usuarios (una cuenta por persona; ninguna con el nombre como contraseña) ===
+
+User created.
+
+
+User created.
+
+
+User created.
+
+
+User created.
+
+
+User created.
+
+
+User created.
+
+
+User created.
+
+=== 4. Roles por función (no se otorgan privilegios directos a personas) ===
+
+Role created.
+
+
+Grant succeeded.
+
+
+Role created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Role created.
+
+
+Grant succeeded.
+
+=== 5. Asignación de roles ===
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+=== 6. Cuenta mal configurada A PROPÓSITO (hallazgo a detectar en VC-07) ===
+
+Grant succeeded.
+
+=== Verificación ===
+
+USERNAME         ACCOUNT_STATUS     PROFILE                AUTHENTICA
+---------------- ------------------ ---------------------- ----------
+ANA              OPEN               PERFIL_CONFIDENCIAL    PASSWORD
+APP_RIESGO       OPEN               PERFIL_CONFIDENCIAL    PASSWORD
+AUDITOR_LAB      OPEN               PERFIL_CONFIDENCIAL    PASSWORD
+JUAN             OPEN               PERFIL_CONFIDENCIAL    PASSWORD
+PRUEBA_BLOQUEO   OPEN               PERFIL_CONFIDENCIAL    PASSWORD
+PRUEBA_IDLE      OPEN               PERFIL_PRUEBA_IDLE     PASSWORD
+SEGURIDAD_LAB    OPEN               DEFAULT                NONE
+SOPORTE_LAB      OPEN               PERFIL_CONFIDENCIAL    PASSWORD
+VENTAS_DEV       OPEN               DEFAULT                NONE
+VENTAS_LAB       OPEN               DEFAULT                NONE
+
+10 rows selected.
+
+
+GRANTEE          GRANTED_ROLE
+---------------- --------------------
+ANA              CONEXION_LAB
+ANA              VENDEDORES
+AUDITOR_LAB      AUDIT_VIEWER
+AUDITOR_LAB      CONEXION_LAB
+JUAN             CONEXION_LAB
+JUAN             VENDEDORES
+PRUEBA_BLOQUEO   CONEXION_LAB
+PRUEBA_IDLE      CONEXION_LAB
+SOPORTE_LAB      CONEXION_LAB
+SOPORTE_LAB      SOPORTE_CONSULTA
+
+10 rows selected.
+
+
+GRANTEE          OWNER          TABLE_NAME               PRIVILEGE
+---------------- -------------- ------------------------ ------------------------
+SOPORTE_CONSULTA VENTAS_LAB     CLIENTES                 SELECT
+VENDEDORES       VENTAS_LAB     CLIENTES                 SELECT
+VENDEDORES       VENTAS_LAB     REGISTRAR_VENTA          EXECUTE
+VENDEDORES       VENTAS_LAB     VENTAS                   SELECT
+
+4 rows selected.
+

@@ -1,0 +1,23 @@
+== Evidencia: PR-99_captura_cierre
+== Script   : sql/30_pruebas/PR-99_cerrar_captura_privilegios.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:47:43 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+
+PL/SQL procedure successfully completed.
+
+
+CAPTURE        E
+-------------- -
+CAP_LAB_CONF   N
+
+1 row selected.
+
+
+PRIVILEGIOS_USADOS
+------------------
+                29
+
+1 row selected.
+

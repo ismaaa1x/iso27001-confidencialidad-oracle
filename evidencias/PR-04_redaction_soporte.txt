@@ -1,0 +1,24 @@
+== Evidencia: PR-04_redaction_soporte
+== Script   : sql/30_pruebas/PR-04_redaction_soporte.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:47 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-04.1 Esperado: 20 filas visibles
+
+     FILAS
+----------
+        20
+
+1 row selected.
+
+>>> PR-04.2 Esperado: cédula, correo y tarjeta enmascarados
+
+ID_CLIENTE NOMBRE               CEDULA       CORREO                         TARJETA             VENDEDOR
+---------- -------------------- ------------ ------------------------------ ------------------- ----------
+         1 Cliente Ficticio 01  *-****-7919  xxxx@correo-ficticio.test      ****-****-****-1001 JUAN
+         2 Cliente Ficticio 02  *-****-5838  xxxx@correo-ficticio.test      ****-****-****-1002 ANA
+         3 Cliente Ficticio 03  *-****-3757  xxxx@correo-ficticio.test      ****-****-****-1003 JUAN
+
+3 rows selected.
+

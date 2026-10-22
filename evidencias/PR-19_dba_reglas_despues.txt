@@ -1,0 +1,62 @@
+== Evidencia: PR-19_dba_reglas_despues
+== Script   : sql/30_pruebas/PR-19_dba_altera_reglas.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:48:19 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> Antes: SYSTEM ve 0 filas (VPD)
+
+     FILAS
+----------
+         0
+
+1 row selected.
+
+>>> PR-19.1 SYSTEM se agrega a la tabla de reglas con alcance TODOS
+
+1 row created.
+
+
+Commit complete.
+
+>>> Resultado: ahora SYSTEM ve todas las filas y, por estar exento de
+>>> Redaction (rol DBA), también la tarjeta completa
+
+     FILAS
+----------
+        20
+
+1 row selected.
+
+
+ID_CLIENTE CEDULA       TARJETA
+---------- ------------ -------------------
+         1 2-3571-7919  4111-1111-0037-1001
+
+1 row selected.
+
+>>> Revertir el cambio
+
+1 row deleted.
+
+
+Commit complete.
+
+>>> ¿Quedó registrado el INSERT de SYSTEM en las reglas? (últimos 2 minutos)
+Antes de A-02: solo aparece el DELETE (por DELETE ANY TABLE); el INSERT no.
+Después de A-02: aparecen INSERT, SELECT y DELETE con POL_CONF_CAMBIOS_REGLAS.
+
+EVENT_TIMESTAMP            DBUSERNAME     ACTION_NAME      OBJECT_NAME              UNIFIED_AUDIT_POLICIES
+-------------------------- -------------- ---------------- ------------------------ ------------------------------
+05:47:42                   SYSTEM         DELETE           REGLAS_ACCESO            POL_CONF_PRIVILEGIOS_AMPLIOS
+05:48:00                   SYSTEM         SELECT           REGLAS_ACCESO            POL_CONF_PRIVILEGIOS_AMPLIOS
+05:48:19                   SYSTEM         DELETE           REGLAS_ACCESO            POL_CONF_PRIVILEGIOS_AMPLIOS,
+                                                                                    POL_CONF_CAMBIOS_REGLAS
+
+05:48:19                   SYSTEM         SELECT           REGLAS_ACCESO            POL_CONF_CAMBIOS_REGLAS
+05:48:19                   SYSTEM         SELECT           REGLAS_ACCESO            POL_CONF_CAMBIOS_REGLAS
+05:48:19                   SYSTEM         INSERT           REGLAS_ACCESO            POL_CONF_CAMBIOS_REGLAS
+05:48:19                   SYSTEM         SELECT           REGLAS_ACCESO            POL_CONF_CAMBIOS_REGLAS
+
+7 rows selected.
+

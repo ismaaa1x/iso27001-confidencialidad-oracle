@@ -1,0 +1,25 @@
+== Evidencia: PR-05_borrado_denegado
+== Script   : sql/30_pruebas/PR-05_borrado_denegado.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:48 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-05.1 Esperado: ORA-41900 missing DELETE privilege (ORA-01031 en 19c/21c)
+DELETE FROM ventas_lab.clientes WHERE id_cliente = 1
+                       *
+ERROR at line 1:
+ORA-41900: missing DELETE privilege on "VENTAS_LAB"."CLIENTES"
+Help: https://docs.oracle.com/error-help/db/ora-41900/
+
+
+>>> PR-05.2 Esperado: ORA-41900 missing UPDATE privilege (ORA-01031 en 19c/21c)
+UPDATE ventas_lab.clientes SET correo = 'otro@correo-ficticio.test' WHERE id_cliente = 1
+                  *
+ERROR at line 1:
+ORA-41900: missing UPDATE privilege on "VENTAS_LAB"."CLIENTES"
+Help: https://docs.oracle.com/error-help/db/ora-41900/
+
+
+
+Rollback complete.
+

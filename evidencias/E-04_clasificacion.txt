@@ -1,0 +1,75 @@
+== Evidencia: E-04_clasificacion
+== Script   : sql/10_lab_setup/04_clasificacion.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:42:27 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+
+Comment created.
+
+=== Verificación: inventario de columnas clasificadas ===
+
+TABLE_NAME               COLUMN_NAME      COMMENTS
+------------------------ ---------------- ------------------------------------------------------------
+CLIENTES                 CEDULA           [CONFIDENCIAL] Dato personal identificativo (Ley 8968)
+CLIENTES                 CORREO           [CONFIDENCIAL] Dato personal de contacto
+CLIENTES                 FECHA_REGISTRO   [INTERNO] Fecha de alta
+CLIENTES                 ID_CLIENTE       [INTERNO] Identificador técnico
+CLIENTES                 NOMBRE           [CONFIDENCIAL] Dato personal
+CLIENTES                 TARJETA          [RESTRINGIDO] Dato financiero: enmascarado para todos salvo
+                                          cuentas exentas
+
+CLIENTES                 TELEFONO         [CONFIDENCIAL] Dato personal de contacto
+CLIENTES                 VENDEDOR         [INTERNO] Vendedor asignado (usado por VPD)
+VENTAS                   FECHA            [INTERNO] Fecha de la venta
+VENTAS                   ID_CLIENTE       [INTERNO] Referencia al cliente (permite vincular con datos
+                                          personales)
+
+VENTAS                   ID_VENTA         [INTERNO] Identificador técnico
+VENTAS                   MONTO            [CONFIDENCIAL] Información comercial
+VENTAS                   VENDEDOR         [INTERNO] Vendedor (usado por VPD)
+
+13 rows selected.
+

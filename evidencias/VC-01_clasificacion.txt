@@ -1,0 +1,38 @@
+== Evidencia: VC-01_clasificacion
+== Script   : sql/20_verificacion/VC-01_clasificacion.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:47:46 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== Inventario de clasificación ===
+
+TABLE_NAME               COLUMN_NAME      COMMENTS
+------------------------ ---------------- ------------------------------------------------------------
+CLIENTES                 ID_CLIENTE       [INTERNO] Identificador técnico
+CLIENTES                 NOMBRE           [CONFIDENCIAL] Dato personal
+CLIENTES                 CEDULA           [CONFIDENCIAL] Dato personal identificativo (Ley 8968)
+CLIENTES                 CORREO           [CONFIDENCIAL] Dato personal de contacto
+CLIENTES                 TELEFONO         [CONFIDENCIAL] Dato personal de contacto
+CLIENTES                 TARJETA          [RESTRINGIDO] Dato financiero: enmascarado para todos salvo
+                                          cuentas exentas
+
+CLIENTES                 VENDEDOR         [INTERNO] Vendedor asignado (usado por VPD)
+CLIENTES                 FECHA_REGISTRO   [INTERNO] Fecha de alta
+VENTAS                   ID_VENTA         [INTERNO] Identificador técnico
+VENTAS                   ID_CLIENTE       [INTERNO] Referencia al cliente (permite vincular con datos
+                                          personales)
+
+VENTAS                   VENDEDOR         [INTERNO] Vendedor (usado por VPD)
+VENTAS                   MONTO            [CONFIDENCIAL] Información comercial
+VENTAS                   FECHA            [INTERNO] Fecha de la venta
+
+13 rows selected.
+
+=== Resultado ===
+
+COLUMNAS_SIN_ETIQUETA RESULTADO
+--------------------- ------------
+                    0 CUMPLE
+
+1 row selected.
+

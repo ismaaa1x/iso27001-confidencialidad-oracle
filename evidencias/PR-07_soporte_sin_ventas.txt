@@ -1,0 +1,14 @@
+== Evidencia: PR-07_soporte_sin_ventas
+== Script   : sql/30_pruebas/PR-07_soporte_sin_ventas.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:51 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-07 Esperado: ORA-00942 table or view does not exist
+SELECT COUNT(*) FROM ventas_lab.ventas
+                                *
+ERROR at line 1:
+ORA-00942: table or view "VENTAS_LAB"."VENTAS" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/
+
+

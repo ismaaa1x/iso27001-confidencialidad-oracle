@@ -1,0 +1,65 @@
+== Evidencia: E-07_auditoria
+== Script   : sql/10_lab_setup/07_auditoria.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:42:31 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== 1. Acceso a los datos confidenciales (éxito y fallo) ===
+
+Audit policy created.
+
+
+Audit succeeded.
+
+=== 2. Gestión de identidades y privilegios ===
+
+Audit policy created.
+
+
+Audit succeeded.
+
+=== 3. Uso de privilegios amplios (SELECT ANY TABLE) ===
+
+Audit policy created.
+
+
+Audit succeeded.
+
+=== 4. Cambios en los controles de confidencialidad (VPD, Redaction, FGA) ===
+
+Audit policy created.
+
+
+Audit succeeded.
+
+=== 5. Fine-Grained Auditing: solo cuando se consulta la columna TARJETA ===
+
+PL/SQL procedure successfully completed.
+
+=== Verificación: políticas habilitadas ===
+
+POLICY_NAME                ENABLED_OPTION ENTITY_NAME  SUC FAI
+-------------------------- -------------- ------------ --- ---
+ORA$DICTIONARY_SENS_COL_AC BY USER        ALL USERS    YES YES
+CESS
+
+ORA_DV_DEFAULT_PROTECTION  BY USER        ALL USERS    YES YES
+ORA_DV_SCHEMA_CHANGES      BY USER        ALL USERS    YES YES
+ORA_LOGIN_LOGOUT           BY USER        ALL USERS    NO  YES
+ORA_SECURECONFIG           BY USER        ALL USERS    YES YES
+POL_CONF_ACCESO_DATOS      BY USER        ALL USERS    YES YES
+POL_CONF_CAMBIOS_CONTROLES BY USER        ALL USERS    YES YES
+POL_CONF_GESTION_ACCESOS   BY USER        ALL USERS    YES YES
+POL_CONF_PRIVILEGIOS_AMPLI BY USER        ALL USERS    YES YES
+OS
+
+
+9 rows selected.
+
+
+OBJECT_SCHEMA  OBJECT_NAME              POLICY_NAME                ENA
+-------------- ------------------------ -------------------------- ---
+VENTAS_LAB     CLIENTES                 FGA_CONSULTA_TARJETA       YES
+
+1 row selected.
+

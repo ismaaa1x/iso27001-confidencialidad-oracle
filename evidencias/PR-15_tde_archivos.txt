@@ -1,0 +1,29 @@
+== Evidencia: PR-15_tde_archivos
+== Script   : sql/30_pruebas/PR-15_tde_archivos.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:46:05 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> Escribir a disco los bloques modificados (checkpoint)
+
+System altered.
+
+>>> PR-15.1 Datafile SIN cifrar (ts_sin_cifrar01.dbf): se espera ver el marcador
+#MARCADOR-CONFIDENCIAL-ISO27001-2026
+
+>>> PR-15.2 Datafile CIFRADO (ts_confidencial01.dbf): se espera 0 coincidencias
+coincidencias MARCADOR = 0
+
+coincidencias correo-ficticio.test = 0
+
+>>> Control: la base SÍ lee los datos cifrados (descifrado transparente)
+
+Session altered.
+
+
+TEXTO
+------------------------------------------------------------
+MARCADOR-CONFIDENCIAL-ISO27001-2026
+
+1 row selected.
+

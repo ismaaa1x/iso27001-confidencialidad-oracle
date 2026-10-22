@@ -1,0 +1,50 @@
+== Evidencia: VC-12_prevencion_fuga
+== Script   : sql/20_verificacion/VC-12_prevencion_fuga.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:06 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== (a) Ubicación de las tablas y cifrado del tablespace ===
+
+TABLE_NAME               TABLESPACE_NAME  ENC
+------------------------ ---------------- ---
+CLIENTES                 TS_CONFIDENCIAL  YES
+PRUEBA_TDE_CIFRADO       TS_CONFIDENCIAL  YES
+PRUEBA_TDE_PLANO         TS_SIN_CIFRAR    NO
+VENTAS                   TS_CONFIDENCIAL  YES
+
+4 rows selected.
+
+
+TABLESPACE_NAME  ENCRYPTION ENC STATUS
+---------------- ---------- --- --------------
+TS_CONFIDENCIAL  AES256     YES NORMAL
+
+1 row selected.
+
+
+WRL_TYPE             STATUS         WALLET_TYPE
+-------------------- -------------- ------------
+FILE                 OPEN           PASSWORD
+
+1 row selected.
+
+=== (b) Políticas de detección habilitadas ===
+
+POLICY_NAME                ENABLED_OPTION ENTITY_NAME
+-------------------------- -------------- ------------
+POL_CONF_ACCESO_DATOS      BY USER        ALL USERS
+POL_CONF_PRIVILEGIOS_AMPLI BY USER        ALL USERS
+OS
+
+
+2 rows selected.
+
+=== Resultado ===
+
+A_TABLAS_CIFRADAS A_KEYSTORE                     B_POLITICAS RESULTADO
+----------------- ------------------------------ ----------- ------------
+                2 OPEN                                     2 CUMPLE
+
+1 row selected.
+

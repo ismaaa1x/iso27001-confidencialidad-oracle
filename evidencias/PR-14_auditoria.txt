@@ -1,0 +1,137 @@
+== Evidencia: PR-14_auditoria
+== Script   : sql/30_pruebas/PR-14_auditoria_registra.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:46:04 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-14.1 Resumen por usuario, acción, objeto y resultado (última hora)
+
+DBUSERNAME     ACTION_NAME      OBJECT_NAME              RETURN_CODE    EVENTOS
+-------------- ---------------- ------------------------ ----------- ----------
+ANA            EXECUTE          REGISTRAR_VENTA                    0          2
+ANA            SELECT           CLIENTES                           0          6
+APP_RIESGO     LOGON                                           28000          1
+APP_RIESGO     SELECT           CLIENTES                           0          6
+APP_RIESGO     SELECT           REGLAS_ACCESO                      0          2
+AUDITOR_LAB    CREATE AUDIT POL POL_AUDITOR_INTENTO            41732          2
+               ICY
+
+AUDITOR_LAB    NOAUDIT          POL_CONF_ACCESO_DATOS           1031          2
+AUDITOR_LAB    SELECT           CLIENTES                        2004          2
+JUAN           ALTER USER       JUAN                           28003          6
+JUAN           DELETE           CLIENTES                        2004          2
+JUAN           EXECUTE          REGISTRAR_VENTA                    0          4
+JUAN           INSERT           VENTAS                             0          2
+JUAN           INSERT           VENTAS                          2004          2
+JUAN           SELECT           CLIENTES                           0         12
+JUAN           SELECT           VENTAS                             0          2
+JUAN           UPDATE           CLIENTES                        2004          2
+PRUEBA_BLOQUEO LOGON                                            1017          6
+PRUEBA_BLOQUEO LOGON                                           28000          2
+SOPORTE_LAB    SELECT           CLIENTES                           0          6
+SOPORTE_LAB    SELECT           VENTAS                          2004          2
+
+20 rows selected.
+
+>>> PR-14.2 Intentos RECHAZADOS (return_code distinto de 0)
+
+EVENT_TIMESTAMP            DBUSERNAME     ACTION_NAME      OBJECT_NAME              RETURN_CODE SQL_TEXT
+-------------------------- -------------- ---------------- ------------------------ ----------- ------------------------------------------------------------
+05:29:04                   JUAN           UPDATE           CLIENTES                        2004 UPDATE ventas_lab.clientes SET correo = 'otro@correo-fictici
+
+
+05:29:04                   JUAN           DELETE           CLIENTES                        2004 DELETE FROM ventas_lab.clientes WHERE id_cliente = 1
+
+
+05:29:05                   JUAN           INSERT           VENTAS                          2004 INSERT INTO ventas_lab.ventas (id_cliente, vendedor, monto)
+
+
+05:29:07                   SOPORTE_LAB    SELECT           VENTAS                          2004 SELECT COUNT(*) FROM ventas_lab.ventas
+05:29:08                   AUDITOR_LAB    SELECT           CLIENTES                        2004 SELECT COUNT(*) FROM ventas_lab.clientes
+
+
+05:29:10                   AUDITOR_LAB    CREATE AUDIT POL POL_AUDITOR_INTENTO            41732 CREATE AUDIT POLICY pol_auditor_intento ACTIONS LOGON
+                                          ICY
+
+05:29:10                   AUDITOR_LAB    NOAUDIT          POL_CONF_ACCESO_DATOS           1031 NOAUDIT POLICY pol_conf_acceso_datos
+05:29:13                   JUAN           ALTER USER       JUAN                           28003 ALTER USER juan IDENTIFIED BY * REPLACE *
+
+
+05:29:13                   JUAN           ALTER USER       JUAN                           28003 ALTER USER juan IDENTIFIED BY * REPLACE *
+
+
+05:29:13                   JUAN           ALTER USER       JUAN                           28003 ALTER USER juan IDENTIFIED BY * REPLACE *
+
+
+05:29:15                   PRUEBA_BLOQUEO LOGON                                            1017
+05:29:16                   PRUEBA_BLOQUEO LOGON                                            1017
+05:29:17                   PRUEBA_BLOQUEO LOGON                                            1017
+05:29:17                   PRUEBA_BLOQUEO LOGON                                           28000
+05:34:16                   APP_RIESGO     LOGON                                           28000
+05:42:48                   JUAN           UPDATE           CLIENTES                        2004 UPDATE ventas_lab.clientes SET correo = 'otro@correo-fictici
+
+
+05:42:48                   JUAN           DELETE           CLIENTES                        2004 DELETE FROM ventas_lab.clientes WHERE id_cliente = 1
+
+
+05:42:50                   JUAN           INSERT           VENTAS                          2004 INSERT INTO ventas_lab.ventas (id_cliente, vendedor, monto)
+
+
+05:42:51                   SOPORTE_LAB    SELECT           VENTAS                          2004 SELECT COUNT(*) FROM ventas_lab.ventas
+05:42:52                   AUDITOR_LAB    SELECT           CLIENTES                        2004 SELECT COUNT(*) FROM ventas_lab.clientes
+
+
+05:42:54                   AUDITOR_LAB    CREATE AUDIT POL POL_AUDITOR_INTENTO            41732 CREATE AUDIT POLICY pol_auditor_intento ACTIONS LOGON
+                                          ICY
+
+05:42:54                   AUDITOR_LAB    NOAUDIT          POL_CONF_ACCESO_DATOS           1031 NOAUDIT POLICY pol_conf_acceso_datos
+05:42:57                   JUAN           ALTER USER       JUAN                           28003 ALTER USER juan IDENTIFIED BY * REPLACE *
+
+
+05:42:57                   JUAN           ALTER USER       JUAN                           28003 ALTER USER juan IDENTIFIED BY * REPLACE *
+
+
+05:42:57                   JUAN           ALTER USER       JUAN                           28003 ALTER USER juan IDENTIFIED BY * REPLACE *
+
+
+05:42:59                   PRUEBA_BLOQUEO LOGON                                            1017
+05:43:00                   PRUEBA_BLOQUEO LOGON                                            1017
+05:43:01                   PRUEBA_BLOQUEO LOGON                                            1017
+05:43:01                   PRUEBA_BLOQUEO LOGON                                           28000
+
+29 rows selected.
+
+>>> PR-14.3 Uso de SELECT ANY TABLE y consultas a la columna TARJETA (FGA)
+
+DBUSERNAME     AUDIT_TYPE       POLICY_NAME                OBJECT_NAME                 EVENTOS
+-------------- ---------------- -------------------------- ------------------------ ----------
+APP_RIESGO     Standard         POL_CONF_PRIVILEGIOS_AMPLI CLIENTES                          4
+                                OS
+
+APP_RIESGO     Standard         POL_CONF_PRIVILEGIOS_AMPLI REGLAS_ACCESO                     2
+                                OS
+
+APP_RIESGO     Standard         POL_CONF_PRIVILEGIOS_AMPLI CLIENTES                          2
+                                OS, POL_CONF_ACCESO_DATOS
+
+JUAN           FineGrainedAudit FGA_CONSULTA_TARJETA       CLIENTES                          2
+SOPORTE_LAB    FineGrainedAudit FGA_CONSULTA_TARJETA       CLIENTES                          2
+SYSTEM         FineGrainedAudit FGA_CONSULTA_TARJETA       CLIENTES                          2
+SYSTEM         Standard         ORA_SECURECONFIG, POL_CONF PRUEBA_TDE_CIFRADO                1
+                                _PRIVILEGIOS_AMPLIOS
+
+SYSTEM         Standard         POL_CONF_PRIVILEGIOS_AMPLI BIN$Xmg06SbADybgYwIAEaz4          1
+                                OS                         ag==$0
+
+SYSTEM         Standard         POL_CONF_PRIVILEGIOS_AMPLI PRUEBA_TDE_CIFRADO                3
+                                OS
+
+SYSTEM         Standard         POL_CONF_PRIVILEGIOS_AMPLI PRUEBA_TDE_PLANO                  3
+                                OS
+
+SYSTEM         Standard         POL_CONF_PRIVILEGIOS_AMPLI REGLAS_ACCESO                     3
+                                OS
+
+
+11 rows selected.
+

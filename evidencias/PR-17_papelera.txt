@@ -1,0 +1,50 @@
+== Evidencia: PR-17_papelera
+== Script   : sql/30_pruebas/PR-17_papelera_purge.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:47:37 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> Crear una copia temporal con un dato confidencial (marcador)
+
+Table created.
+
+>>> PR-17.1 DROP sin PURGE
+
+Table dropped.
+
+>>> Esperado: la tabla sigue en la papelera
+
+OWNER          OBJECT_NAME              ORIGINAL                                           DROPTIME
+-------------- ------------------------ -------------------------------------------------- --------------------
+VENTAS_LAB     BIN$XmhmuR5WF7/gYwIAEawB COPIA_TEMPORAL                                     2026-10-22:05:47:38
+               yg==$0
+
+
+1 row selected.
+
+>>> Esperado: el contenido "borrado" todavía se puede leer
+
+
+
+
+1 row selected.
+
+
+TEXTO
+------------------------------------------------------------
+MARCADOR-CONFIDENCIAL-ISO27001-2026
+
+1 row selected.
+
+>>> PR-17.2 Eliminación definitiva
+
+Table purged.
+
+>>> Esperado: 0 objetos en la papelera
+
+EN_PAPELERA
+-----------
+          0
+
+1 row selected.
+

@@ -1,0 +1,47 @@
+== Evidencia: E-05_vpd
+== Script   : sql/10_lab_setup/05_vpd.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:42:28 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== 1. Tabla de reglas de acceso ===
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Commit complete.
+
+=== 2. Función de política (devuelve el predicado WHERE) ===
+
+Function created.
+
+=== 3. Políticas sobre CLIENTES y VENTAS ===
+
+PL/SQL procedure successfully completed.
+
+=== Verificación ===
+
+OBJECT_OWNER   OBJECT_NAME              POLICY_NAME                PF_OWNER       FUNCTION               SEL INS UPD DEL ENA
+-------------- ------------------------ -------------------------- -------------- ---------------------- --- --- --- --- ---
+VENTAS_LAB     CLIENTES                 VPD_CLIENTES_VENDEDOR      SEGURIDAD_LAB  FN_VPD_VENDEDOR        YES YES YES YES YES
+VENTAS_LAB     VENTAS                   VPD_VENTAS_VENDEDOR        SEGURIDAD_LAB  FN_VPD_VENDEDOR        YES YES YES YES YES
+
+2 rows selected.
+
+Consulta como SYSTEM (DBA sin EXEMPT ACCESS POLICY): se espera 0 filas
+
+FILAS_VISIBLES_PARA_SYSTEM
+--------------------------
+                         0
+
+1 row selected.
+

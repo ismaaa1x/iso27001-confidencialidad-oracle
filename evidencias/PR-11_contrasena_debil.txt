@@ -1,0 +1,21 @@
+== Evidencia: PR-11_contrasena_debil
+== Script   : sql/30_pruebas/PR-11_contrasena_debil.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:56 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-11 Esperado: ORA-28003 en los tres intentos
+PR-11.1 "JUAN" (igual al nombre de usuario) -> RECHAZADA: ORA-28003: The password chosen did not meet the required complexity rules set by your organization.
+PR-11.2 "Ju4n!" (demasiado corta) -> RECHAZADA: ORA-28003: The password chosen did not meet the required complexity rules set by your organization.
+PR-11.3 "vendedorjuan" (sin mayúsculas, dígitos ni símbolos) -> RECHAZADA: ORA-28003: The password chosen did not meet the required complexity rules set by your organization.
+
+PL/SQL procedure successfully completed.
+
+>>> Comprobación: la sesión sigue funcionando con la contraseña original
+
+USUARIO
+----------------
+JUAN
+
+1 row selected.
+

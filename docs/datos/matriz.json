@@ -1,0 +1,276 @@
+{
+ "escala_madurez": [
+  [
+   "0",
+   "Inexistente",
+   "No hay configuración ni procedimiento para el control."
+  ],
+  [
+   "1",
+   "Inicial",
+   "Se hace de forma manual u ocasional, sin configuración técnica que lo garantice."
+  ],
+  [
+   "2",
+   "Implementado parcialmente",
+   "Hay configuración técnica, pero no cubre todo el alcance o no se ha comprobado."
+  ],
+  [
+   "3",
+   "Implementado y verificado",
+   "La configuración cubre el alcance del laboratorio y un script de verificación más pruebas positivas y negativas lo demuestran con evidencia."
+  ],
+  [
+   "4",
+   "Gestionado",
+   "Además de 3: se ejecuta de forma periódica o automática, tiene responsables y alertas, y sus registros se conservan fuera del alcance del administrador."
+  ]
+ ],
+ "nota": "La MADUREZ (0-4) mide qué tan sólido y sostenido es el control. El ESTADO (Cumple, Parcial, No cumple, Pendiente de evaluación) indica si la evidencia satisface el criterio de la comprobación en el laboratorio. Un control puede «Cumplir» su comprobación y tener madurez 3, no 4, porque falta la operación periódica.",
+ "filas": [
+  {
+   "control": "A.5.12",
+   "tarea": "T07, T15",
+   "riesgo": "R-CONF-01, R-CONF-04",
+   "criterios": [
+    "Sin inventario de datos sensibles",
+    "Clasificación en documentos aparte, no vinculada a la base",
+    "Algunas columnas etiquetadas en el diccionario",
+    "Todas las columnas de negocio etiquetadas y verificadas por script (VC-01)",
+    "Además, la clasificación se revisa periódicamente y alimenta automáticamente Redaction y auditoría"
+   ],
+   "nivel": 3,
+   "vc": "VC-01",
+   "evidencia": "VC-01, E-04",
+   "justificacion": "Las 13 columnas están etiquetadas y VC-01 lo comprueba. No hay revisión periódica ni descubrimiento automático."
+  },
+  {
+   "control": "A.5.15",
+   "tarea": "T02",
+   "riesgo": "R-CONF-01",
+   "criterios": [
+    "Acceso con cuentas compartidas o con DBA",
+    "Permisos directos a personas, sin política",
+    "Roles por función, pero con excepciones directas o a PUBLIC",
+    "Solo roles por función, nada a PUBLIC; pruebas negativas lo demuestran (VC-02, PR-05/06/07)",
+    "Además, altas y bajas de roles por flujo aprobado y revisión periódica"
+   ],
+   "nivel": 3,
+   "vc": "VC-02",
+   "evidencia": "VC-02, PR-05, PR-06, PR-07",
+   "justificacion": "Todo el acceso pasa por roles; las pruebas negativas fueron rechazadas. No existe un flujo formal de aprobación."
+  },
+  {
+   "control": "A.5.16",
+   "tarea": "T01",
+   "riesgo": "R-CONF-02",
+   "criterios": [
+    "Cuentas genéricas o compartidas",
+    "Cuentas individuales, pero con contraseñas por defecto o esquemas con login",
+    "Cuentas individuales; esquemas aún con login",
+    "Cuentas individuales, esquemas NO AUTHENTICATION, sin contraseñas por defecto (VC-03)",
+    "Además, ciclo de vida integrado con RR. HH./IAM y bajas automáticas"
+   ],
+   "nivel": 3,
+   "vc": "VC-03",
+   "evidencia": "VC-03, E-03",
+   "justificacion": "Se cumple el criterio técnico. No hay integración con un sistema de identidades."
+  },
+  {
+   "control": "A.5.17",
+   "tarea": "T04",
+   "riesgo": "R-CONF-02",
+   "criterios": [
+    "Sin reglas de contraseña",
+    "Reglas escritas, no aplicadas por la base",
+    "Función de verificación solo en parte de las cuentas",
+    "Función de verificación, vigencia y no reutilización en TODAS las cuentas, probado con PR-11",
+    "Además, gestor de secretos o autenticación centralizada"
+   ],
+   "nivel": 2,
+   "vc": "VC-04",
+   "evidencia": "VC-04, PR-11",
+   "justificacion": "El perfil del laboratorio cumple y PR-11 lo demuestra, pero el perfil DEFAULT (resto de cuentas) no tiene función de verificación: alcance parcial."
+  },
+  {
+   "control": "A.5.18",
+   "tarea": "T02, T03",
+   "riesgo": "R-CONF-01",
+   "criterios": [
+    "Nunca se revisan los derechos",
+    "Revisión manual ocasional sin evidencia",
+    "Revisión con herramienta (Privilege Analysis) sin acciones derivadas",
+    "Revisión con herramienta, hallazgos corregidos y re-verificados",
+    "Además, revisión programada (p. ej., trimestral) con aprobación del dueño de la información"
+   ],
+   "nivel": 2,
+   "vc": "VC-05",
+   "evidencia": "VC-05, PR-00, PR-99",
+   "justificacion": "Privilege Analysis identificó privilegios sin uso, pero aún no se decidió su revocación (requiere al dueño del proceso). La revocación de A-01 provino de VC-07."
+  },
+  {
+   "control": "A.5.33",
+   "tarea": "T10, T11",
+   "riesgo": "R-CONF-03, R-CONF-05",
+   "criterios": [
+    "Sin auditoría o con el rastro modificable por cualquiera",
+    "Rastro activo sin control de acceso",
+    "Rastro con acceso restringido, sin retención definida",
+    "Rastro protegido (AUDSYS sin login, auditor sin AUDIT_ADMIN) y retención con purga controlada (VC-06, PR-09)",
+    "Además, copia inmutable fuera de la base (SIEM/WORM)"
+   ],
+   "nivel": 3,
+   "vc": "VC-06",
+   "evidencia": "VC-06, PR-09, E-08",
+   "justificacion": "Rastro protegido y con retención. No hay copia externa: SYS aún puede actuar sobre él."
+  },
+  {
+   "control": "A.8.2",
+   "tarea": "T05",
+   "riesgo": "R-CONF-01, R-CONF-05",
+   "criterios": [
+    "Varias cuentas comunes con DBA o ANY",
+    "Privilegios amplios identificados sin corregir",
+    "Sin privilegios amplios en cuentas comunes, pero sin vigilar a los administradores",
+    "Sin privilegios amplios en cuentas comunes (VC-07 después) y uso de privilegios amplios auditado (PR-14, PR-19)",
+    "Además, separación técnica del DBA respecto de los datos (Database Vault) y acceso privilegiado temporal (PAM)"
+   ],
+   "nivel": 3,
+   "vc": "VC-07",
+   "evidencia": "VC-07 antes/después, PR-10, PR-19, A-01, A-02",
+   "justificacion": "VC-07 detectó APP_RIESGO (NO CUMPLE) y tras A-01 dio CUMPLE. El DBA todavía puede alterar las reglas (PR-19): se detecta, no se impide."
+  },
+  {
+   "control": "A.8.3",
+   "tarea": "T07, T08",
+   "riesgo": "R-CONF-01, R-CONF-04",
+   "criterios": [
+    "Cualquier usuario con acceso a la tabla ve todo",
+    "Restricción solo en la aplicación",
+    "VPD o vistas en parte de las tablas",
+    "VPD con denegación por defecto en todas las tablas personales, sin cuentas comunes exentas, probado (VC-08, PR-01/02/10)",
+    "Además, reglas gestionadas fuera del alcance del DBA y revisadas periódicamente"
+   ],
+   "nivel": 3,
+   "vc": "VC-08",
+   "evidencia": "VC-08, PR-01, PR-02, PR-10",
+   "justificacion": "VPD filtra a JUAN, ANA y bloquea a APP_RIESGO. La tabla de reglas es modificable por un DBA (PR-19)."
+  },
+  {
+   "control": "A.8.5",
+   "tarea": "T04, T13",
+   "riesgo": "R-CONF-02, R-CONF-06",
+   "criterios": [
+    "Sin bloqueo ni límites de sesión",
+    "Bloqueo configurado sin probar",
+    "Bloqueo e inactividad solo en algunas cuentas",
+    "Bloqueo, IDLE_TIME y verificadores 12C probados (VC-09, PR-12, PR-13)",
+    "Además, MFA o autenticación centralizada (Kerberos/IAM)"
+   ],
+   "nivel": 3,
+   "vc": "VC-09",
+   "evidencia": "VC-09, PR-12, PR-13",
+   "justificacion": "Bloqueo e inactividad demostrados con ORA-28000 y ORA-02396. No hay MFA."
+  },
+  {
+   "control": "A.8.10",
+   "tarea": "T14",
+   "riesgo": "R-CONF-03",
+   "criterios": [
+    "Los borrados dejan copias recuperables sin control",
+    "Se borra manualmente sin verificar",
+    "Se usa PURGE, sin procedimiento para exports ni respaldos",
+    "Papelera sin datos sensibles (VC-10), PURGE demostrado (PR-17) y exports borrados (PR-16)",
+    "Además, política de retención automatizada y borrado criptográfico de respaldos"
+   ],
+   "nivel": 3,
+   "vc": "VC-10",
+   "evidencia": "VC-10, PR-17, PR-16",
+   "justificacion": "Demostrado en la base. El borrado físico en SSD/Docker no se puede garantizar; no hay retención automatizada."
+  },
+  {
+   "control": "A.8.11",
+   "tarea": "T07, T15",
+   "riesgo": "R-CONF-04",
+   "criterios": [
+    "Datos reales visibles para todos y copiados a desarrollo",
+    "Enmascaramiento manual ocasional",
+    "Enmascaramiento solo dinámico o solo estático",
+    "Dinámico (Redaction) y estático (copia DEV) verificados (VC-11, PR-03/04/10)",
+    "Además, enmascaramiento automático en cada clon y pruebas contra inferencia"
+   ],
+   "nivel": 3,
+   "vc": "VC-11",
+   "evidencia": "VC-11, PR-03, PR-04, PR-10",
+   "justificacion": "Ambos tipos verificados. El rol DBA está exento de Redaction y la copia DEV se genera con un script manual."
+  },
+  {
+   "control": "A.8.12",
+   "tarea": "T06, T09, T10",
+   "riesgo": "R-CONF-03, R-CONF-05",
+   "criterios": [
+    "Datos en claro en archivos y sin detección",
+    "Solo una medida (cifrado o auditoría)",
+    "Cifrado y detección, con vías de fuga conocidas sin cubrir",
+    "TDE probado (PR-15) y detección de lecturas/privilegios amplios (VC-12, PR-14); todas las vías de copia cubiertas",
+    "Además, DLP de red/endpoint y alertas automáticas"
+   ],
+   "nivel": 2,
+   "vc": "VC-12",
+   "evidencia": "VC-12, PR-15, PR-16",
+   "justificacion": "TDE y auditoría funcionan, pero PR-16 mostró que un export de Data Pump guarda en claro los datos TDE (ORA-39173) y Free no permite cifrarlo: hay una vía de fuga que depende de procedimiento.",
+   "estado": "Parcial",
+   "motivo_estado": "VC-12 da CUMPLE (TDE + detección), pero PR-16 demostró una vía de fuga: el export de Data Pump guarda en claro los datos TDE y Free no permite cifrarlo."
+  },
+  {
+   "control": "A.8.13",
+   "tarea": "T09",
+   "riesgo": "R-CONF-03",
+   "criterios": [
+    "Respaldos en claro y accesibles",
+    "Respaldos en claro con acceso restringido",
+    "Algunos respaldos cifrados",
+    "Todos los respaldos físicos cifrados (RMAN), keystore respaldado y exports controlados (VC-13, PR-16)",
+    "Además, keystore fuera del servidor (HSM/OKV) y pruebas de restauración"
+   ],
+   "nivel": 2,
+   "vc": "VC-13",
+   "evidencia": "VC-13, PR-16, E-11",
+   "justificacion": "RMAN cifra por defecto (verificado), pero los exports lógicos no se pueden cifrar en Free y el keystore está en el mismo servidor.",
+   "estado": "Parcial",
+   "motivo_estado": "VC-13 da CUMPLE para RMAN, pero los exports lógicos no se pueden cifrar en Free (ORA-00439) y el keystore está en el mismo servidor."
+  },
+  {
+   "control": "A.8.15",
+   "tarea": "T10, T11",
+   "riesgo": "R-CONF-05",
+   "criterios": [
+    "Sin auditoría",
+    "Solo auditoría por defecto de Oracle",
+    "Políticas propias sin revisar sus registros",
+    "Políticas sobre datos, accesos, privilegios y controles, con registros reales revisados (VC-14, PR-14)",
+    "Además, envío a SIEM con correlación y alertas"
+   ],
+   "nivel": 3,
+   "vc": "VC-14",
+   "evidencia": "VC-14 antes/después, PR-14, PR-19",
+   "justificacion": "Los registros muestran quién, cuándo, qué y el resultado. No hay SIEM."
+  },
+  {
+   "control": "A.8.20",
+   "tarea": "T13",
+   "riesgo": "R-CONF-06",
+   "criterios": [
+    "Tráfico en claro y puerto expuesto",
+    "Puerto restringido, tráfico en claro",
+    "Cifrado opcional (REQUESTED)",
+    "Cifrado obligatorio AES256/SHA256 probado con cliente rechazado (VC-15, PR-18) y puerto solo local",
+    "Además, TLS con certificados y autenticación del servidor"
+   ],
+   "nivel": 3,
+   "vc": "VC-15",
+   "evidencia": "VC-15, PR-18, E-10",
+   "justificacion": "Cifrado nativo obligatorio demostrado. Falta TLS con certificado."
+  }
+ ]
+}

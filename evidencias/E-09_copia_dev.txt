@@ -1,0 +1,44 @@
+== Evidencia: E-09_copia_dev
+== Script   : sql/10_lab_setup/09_copia_dev_enmascarada.sql
+== Modo     : sysdba-pdb
+== Fecha    : 2026-10-21 23:42:35 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+
+Session altered.
+
+=== 1. Copia enmascarada de CLIENTES (formato preservado, valores falsos) ===
+
+Table created.
+
+=== 2. Copia de VENTAS (no contiene datos personales directos) ===
+
+Table created.
+
+
+Comment created.
+
+=== Verificación: ningún valor sensible de producción aparece en la copia ===
+
+FILAS_COPIADAS
+--------------
+            20
+
+1 row selected.
+
+
+COINCIDENCIAS_REALES
+--------------------
+                   0
+
+1 row selected.
+
+
+ID_CLIENTE NOMBRE               CEDULA       CORREO                         TARJETA
+---------- -------------------- ------------ ------------------------------ -------------------
+         1 Cliente DEV 001      0-0811-0449  dev001@ejemplo.invalid         0000-0000-0000-0001
+         2 Cliente DEV 002      0-1622-0898  dev002@ejemplo.invalid         0000-0000-0000-0002
+         3 Cliente DEV 003      0-2433-1347  dev003@ejemplo.invalid         0000-0000-0000-0003
+
+3 rows selected.
+

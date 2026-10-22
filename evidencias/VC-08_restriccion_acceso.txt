@@ -1,0 +1,50 @@
+== Evidencia: VC-08_restriccion_acceso
+== Script   : sql/20_verificacion/VC-08_restriccion_acceso.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:47:59 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== (a) Políticas VPD ===
+
+OBJECT_OWNER   OBJECT_NAME              POLICY_NAME                PF_OWNER       FUNCTION               SEL INS UPD DEL CHK ENA POLICY_TYPE
+-------------- ------------------------ -------------------------- -------------- ---------------------- --- --- --- --- --- --- ------------------------
+VENTAS_LAB     CLIENTES                 VPD_CLIENTES_VENDEDOR      SEGURIDAD_LAB  FN_VPD_VENDEDOR        YES YES YES YES YES YES CONTEXT_SENSITIVE
+VENTAS_LAB     VENTAS                   VPD_VENTAS_VENDEDOR        SEGURIDAD_LAB  FN_VPD_VENDEDOR        YES YES YES YES YES YES CONTEXT_SENSITIVE
+
+2 rows selected.
+
+=== Reglas de acceso configuradas ===
+
+USUARIO          ALCANCE
+---------------- ----------
+ANA              PROPIOS
+JUAN             PROPIOS
+SOPORTE_LAB      TODOS
+
+3 rows selected.
+
+=== (b) Información: titulares directos de EXEMPT ACCESS POLICY ===
+
+GRANTEE          PRIVILEGE
+---------------- ------------------------
+GSMADMIN_INTERNA EXEMPT ACCESS POLICY
+L
+
+GSMUSER_ROLE     EXEMPT ACCESS POLICY
+OGG_CAPTURE      EXEMPT ACCESS POLICY
+SYS              EXEMPT ACCESS POLICY
+
+4 rows selected.
+
+=== (b) Cuentas COMUNES exentas de VPD (directo o por roles) - se espera ninguna ===
+
+no rows selected
+
+=== Resultado ===
+
+A_TABLAS_PROTEGIDAS B_COMUNES_EXENTAS RESULTADO
+------------------- ----------------- ------------
+                  2                 0 CUMPLE
+
+1 row selected.
+

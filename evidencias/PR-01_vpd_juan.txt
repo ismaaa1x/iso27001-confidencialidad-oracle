@@ -1,0 +1,30 @@
+== Evidencia: PR-01_vpd_juan
+== Script   : sql/30_pruebas/PR-01_vpd_vendedor_juan.sql
+== Modo     : ninguno
+== Fecha    : 2026-10-21 23:42:42 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> PR-01 Esperado: 10 filas, solo vendedor JUAN
+
+VENDEDOR        FILAS
+---------- ----------
+JUAN               10
+
+1 row selected.
+
+
+ID_CLIENTE NOMBRE               VENDEDOR
+---------- -------------------- ----------
+         1 Cliente Ficticio 01  JUAN
+         3 Cliente Ficticio 03  JUAN
+         5 Cliente Ficticio 05  JUAN
+         7 Cliente Ficticio 07  JUAN
+         9 Cliente Ficticio 09  JUAN
+        11 Cliente Ficticio 11  JUAN
+        13 Cliente Ficticio 13  JUAN
+        15 Cliente Ficticio 15  JUAN
+        17 Cliente Ficticio 17  JUAN
+        19 Cliente Ficticio 19  JUAN
+
+10 rows selected.
+

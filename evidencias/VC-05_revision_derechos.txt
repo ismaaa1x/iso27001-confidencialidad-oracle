@@ -1,0 +1,132 @@
+== Evidencia: VC-05_revision_derechos
+== Script   : sql/20_verificacion/VC-05_revision_derechos.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:47:54 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== Capturas registradas ===
+
+CAPTURE        TYPE             E RUN_NAME
+-------------- ---------------- - --------------------------------------------------------------------------------------------------------------------------------
+CAP_LAB_CONF   CONTEXT          N PRUEBAS_LAB
+ORA$DEPENDENCY DATABASE         N
+
+2 rows selected.
+
+=== Privilegios USADOS durante la captura ===
+
+USERNAME         SYS_PRIV               OBJ_PRIV   OBJECT_OWNER   OBJECT_NAME              USED_ROLE
+---------------- ---------------------- ---------- -------------- ------------------------ --------------------
+ANA              CREATE SESSION                                                            CONEXION_LAB
+ANA                                     EXECUTE    VENTAS_LAB     REGISTRAR_VENTA          VENDEDORES
+ANA                                     SELECT     VENTAS_LAB     CLIENTES                 VENDEDORES
+ANA                                     SELECT     SYS            DUAL                     PUBLIC
+APP_RIESGO       CREATE SESSION                                                            APP_RIESGO
+APP_RIESGO       SELECT ANY TABLE                  VENTAS_DEV     CLIENTES                 APP_RIESGO
+APP_RIESGO       SELECT ANY TABLE                  VENTAS_LAB     CLIENTES                 APP_RIESGO
+APP_RIESGO       SELECT ANY TABLE                  SEGURIDAD_LAB  REGLAS_ACCESO            APP_RIESGO
+APP_RIESGO                              SELECT     SYS            DUAL                     PUBLIC
+AUDITOR_LAB      CREATE SESSION                                                            CONEXION_LAB
+AUDITOR_LAB                             READ       AUDSYS         UNIFIED_AUDIT_TRAIL      AUDIT_VIEWER
+AUDITOR_LAB                             SELECT     SYS            DUAL                     PUBLIC
+AUDSYS           SELECT ANY DICTIONARY             SYS            GV_$UNIFIED_AUDIT_TRAIL  AUDSYS
+AUDSYS                                  READ       SYS            ALL_UNIFIED_AUDIT_ACTION PUBLIC
+                                                                  S
+
+AUDSYS                                  READ       SYS            STMT_AUDIT_OPTION_MAP    PUBLIC
+AUDSYS                                  READ       SYS            SYSTEM_PRIVILEGE_MAP     PUBLIC
+JUAN             CREATE SESSION                                                            CONEXION_LAB
+JUAN                                    EXECUTE    SYS            DBMSOUTPUT_LINESARRAY    PUBLIC
+JUAN                                    EXECUTE    SYS            DBMS_OUTPUT              PUBLIC
+JUAN                                    EXECUTE    SYS            PLITBLM                  PUBLIC
+JUAN                                    EXECUTE    VENTAS_LAB     REGISTRAR_VENTA          VENDEDORES
+JUAN                                    SELECT     VENTAS_LAB     CLIENTES                 VENDEDORES
+JUAN                                    SELECT     SYS            DUAL                     PUBLIC
+JUAN                                    SELECT     SYS            DUAL                     PUBLIC
+JUAN                                    SELECT     VENTAS_LAB     VENTAS                   VENDEDORES
+JUAN                                                                                       VENDEDORES
+SOPORTE_LAB      CREATE SESSION                                                            CONEXION_LAB
+SOPORTE_LAB                             SELECT     VENTAS_LAB     CLIENTES                 SOPORTE_CONSULTA
+SOPORTE_LAB                             SELECT     SYS            DUAL                     PUBLIC
+
+29 rows selected.
+
+=== Privilegios NO usados (candidatos a revocar) ===
+
+USERNAME         ROLE                 SYS_PRIV               OBJ_PRIV   OBJECT_OWNER   OBJECT_NAME
+---------------- -------------------- ---------------------- ---------- -------------- ------------------------
+ANA                                                          SELECT     VENTAS_LAB     VENTAS
+AUDITOR_LAB                                                  EXECUTE    SYS            DBMS_AUDIT_UTIL
+AUDITOR_LAB                                                  EXECUTE    LBACSYS        ORA_GET_AUDITED_LABEL
+AUDITOR_LAB                                                  READ       SYS            AUDIT_UNIFIED_CONTEXTS
+AUDITOR_LAB                                                  READ       SYS            AUDIT_UNIFIED_ENABLED_PO
+                                                                                       LICIES
+
+AUDITOR_LAB                                                  READ       SYS            AUDIT_UNIFIED_POLICIES
+AUDITOR_LAB                                                  READ       SYS            AUDIT_UNIFIED_POLICY_COM
+                                                                                       MENTS
+
+AUDITOR_LAB                                                  READ       SYS            CDB_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       SYS            CDB_COMMON_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       SYS            CDB_FGA_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       AUDSYS         CDB_UNIFIED_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       SYS            CDB_XS_AUDIT_POLICY_OPTI
+                                                                                       ONS
+
+AUDITOR_LAB                                                  READ       AUDSYS         CDB_XS_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       SYS            CDB_XS_ENABLED_AUDIT_POL
+                                                                                       ICIES
+
+AUDITOR_LAB                                                  READ       SYS            DBA_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       SYS            DBA_COMMON_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       SYS            DBA_FGA_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       SYS            DBA_XS_AUDIT_POLICY_OPTI
+                                                                                       ONS
+
+AUDITOR_LAB                                                  READ       AUDSYS         DBA_XS_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       SYS            DBA_XS_ENABLED_AUDIT_POL
+                                                                                       ICIES
+
+AUDITOR_LAB                                                  READ       AUDSYS         DV$CONFIGURATION_AUDIT
+AUDITOR_LAB                                                  READ       AUDSYS         DV$ENFORCEMENT_AUDIT
+AUDITOR_LAB                                                  READ       SYS            GV_$ASM_AUDIT_CLEANUP_JO
+                                                                                       BS
+
+AUDITOR_LAB                                                  READ       SYS            GV_$ASM_AUDIT_CLEAN_EVEN
+                                                                                       TS
+
+AUDITOR_LAB                                                  READ       SYS            GV_$ASM_AUDIT_CONFIG_PAR
+                                                                                       AMS
+
+AUDITOR_LAB                                                  READ       SYS            GV_$ASM_AUDIT_LAST_ARCH_
+                                                                                       TS
+
+AUDITOR_LAB                                                  READ       SYS            GV_$UNIFIED_AUDIT_TRAIL
+AUDITOR_LAB                                                  READ       LBACSYS        OLS$AUDIT_ACTIONS
+AUDITOR_LAB                                                  READ       SYS            V_$ASM_AUDIT_CLEANUP_JOB
+                                                                                       S
+
+AUDITOR_LAB                                                  READ       SYS            V_$ASM_AUDIT_CLEAN_EVENT
+                                                                                       S
+
+AUDITOR_LAB                                                  READ       SYS            V_$ASM_AUDIT_CONFIG_PARA
+                                                                                       MS
+
+AUDITOR_LAB                                                  READ       SYS            V_$ASM_AUDIT_LAST_ARCH_T
+                                                                                       S
+
+AUDITOR_LAB                                                  READ       SYS            V_$UNIFIED_AUDIT_RECORD_
+                                                                                       FORMAT
+
+AUDITOR_LAB                                                  READ       SYS            V_$UNIFIED_AUDIT_TRAIL
+
+34 rows selected.
+
+=== Resultado ===
+
+    USADOS    SIN_USO RESULTADO
+---------- ---------- ------------
+        29         34 PARCIAL
+
+1 row selected.
+

@@ -1,0 +1,39 @@
+== Evidencia: VC-15_seguridad_red
+== Script   : sql/20_verificacion/VC-15_seguridad_red.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:12 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+=== (a) Servicios de red de la sesión actual ===
+
+NETWORK_SERVICE_BANNER
+------------------------------------------------------------------------------------------
+TCP/IP NT Protocol Adapter for Linux: Version 23.26.1.0.0 - Production
+Encryption service for Linux: Version 23.26.1.0.0 - Production
+AES256 Encryption service adapter for Linux: Version 23.26.1.0.0 - Production
+Crypto-checksumming service for Linux: Version 23.26.1.0.0 - Production
+SHA256 Crypto-checksumming service adapter for Linux: Version 23.26.1.0.0 - Production
+
+5 rows selected.
+
+
+PROTOCOLO
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+tcp
+
+1 row selected.
+
+=== (b) Configuración del servidor ===
+SQLNET.ENCRYPTION_SERVER = REQUIRED
+SQLNET.ENCRYPTION_TYPES_SERVER = (AES256)
+SQLNET.CRYPTO_CHECKSUM_SERVER = REQUIRED
+SQLNET.CRYPTO_CHECKSUM_TYPES_SERVER = (SHA256)
+
+=== Resultado ===
+
+RESULTADO
+------------
+CUMPLE
+
+1 row selected.
+

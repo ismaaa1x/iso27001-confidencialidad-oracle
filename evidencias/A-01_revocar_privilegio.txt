@@ -1,0 +1,42 @@
+== Evidencia: A-01_revocar_privilegio
+== Script   : sql/40_actuar/A-01_revocar_privilegio_amplio.sql
+== Modo     : system
+== Fecha    : 2026-10-21 23:48:14 -0600
+== Motor    : contenedor iso27001-oracle
+=====================================================================
+>>> Antes
+
+GRANTEE          PRIVILEGE
+---------------- ------------------------
+APP_RIESGO       CREATE SESSION
+APP_RIESGO       SELECT ANY TABLE
+
+2 rows selected.
+
+
+Revoke succeeded.
+
+
+Revoke succeeded.
+
+
+User altered.
+
+>>> Después
+
+no rows selected
+
+
+USERNAME         ACCOUNT_STATUS
+---------------- ------------------
+APP_RIESGO       LOCKED
+
+1 row selected.
+
+>>> Comprobación: la cuenta ya no puede conectarse (esperado ORA-28000)
+ERROR:
+ORA-28000: The account is locked; login denied.
+Help: https://docs.oracle.com/error-help/db/ora-28000/
+
+
+Warning: You are no longer connected to ORACLE.
