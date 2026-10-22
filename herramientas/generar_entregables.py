@@ -350,18 +350,31 @@ ol.crit{margin:0;padding-left:4px;list-style:none}ol.crit li{margin:2px 0;color:
 
 JS = """
 const qs=(s,r=document)=>r.querySelector(s),qsa=(s,r=document)=>[...r.querySelectorAll(s)];
-function mostrar(id){qsa('.pestana').forEach(p=>p.hidden=p.id!==id);qsa('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.t===id));
- try{localStorage.setItem('iso-tab',id)}catch(e){};window.scrollTo(0,0)}
-qsa('nav button').forEach(b=>b.onclick=()=>mostrar(b.dataset.t));
+function mostrar(id){qsa('.pestana').forEach(p=>p.hidden=p.id!==id);
+ qsa('.side [data-t]').forEach(b=>b.setAttribute('aria-current',b.dataset.t===id));
+ const b=qs('.side [data-t="'+id+'"]');qs('#migas').textContent=b?b.dataset.grupo+' / '+b.dataset.nombre:'';
+ document.body.classList.remove('menu-abierto');try{localStorage.setItem('iso-tab',id)}catch(e){};qs('.contenido').scrollTo(0,0);window.scrollTo(0,0)}
+qsa('[data-t]').forEach(b=>b.addEventListener('click',ev=>{ev.preventDefault();mostrar(b.dataset.t)}));
+qs('#menu').onclick=()=>document.body.classList.toggle('menu-abierto');
+qs('.velo').onclick=()=>document.body.classList.remove('menu-abierto');
 qsa('.pestana').forEach(sec=>{const t=qs('table.filtrable',sec);if(!t)return;const caja=document.createElement('div');caja.className='filtros';
- caja.innerHTML='<input type="search" placeholder="Filtrar esta tabla (texto, ID, control, estado...)" aria-label="Filtrar">'+
+ caja.innerHTML='<label class="buscar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder="Buscar en esta tabla (texto, ID, control, estado...)" aria-label="Buscar"></label>'+
  '<select aria-label="Estado"><option value="">Todos los estados</option><option>Cumple</option><option>Parcial</option><option>No cumple</option><option>Coincide</option><option>No coincide</option><option>Pendiente</option></select><span class="cuenta"></span>';
  t.closest('.tabla').before(caja);const [inp,sel,cta]=[qs('input',caja),qs('select',caja),qs('.cuenta',caja)];
  const f=()=>{const q=inp.value.toLowerCase(),s=sel.value.toLowerCase();let n=0;qsa('tbody tr',t).forEach(tr=>{const tx=tr.textContent.toLowerCase();
- const ok=(!q||tx.includes(q))&&(!s||tx.includes(s));tr.hidden=!ok;n+=ok});cta.textContent=n+' fila(s)'};inp.oninput=f;sel.onchange=f;f()});
-qsa('.evlink').forEach(a=>a.onclick=ev=>{ev.preventDefault();const id=a.dataset.ev;const pre=qs('#txt-'+CSS.escape(id));
- qs('#visor-titulo').textContent='evidencias/'+id+'.txt';qs('#visor-pre').textContent=pre?pre.textContent:'(no encontrada)';qs('#visor').showModal()});
+ const ok=(!q||tx.includes(q))&&(!s||tx.includes(s));tr.hidden=!ok;n+=ok});cta.textContent=n+' de '+qsa('tbody tr',t).length+' registros'};inp.oninput=f;sel.onchange=f;f()});
+function abrirEvidencia(id){const pre=qs('#txt-'+CSS.escape(id));qs('#visor-titulo').textContent=id;
+ qs('#visor-ruta').textContent='evidencias/'+id+'.txt';qs('#visor-pre').textContent=pre?pre.textContent:'(no encontrada)';qs('#visor').showModal()}
+qsa('.evlink').forEach(a=>a.onclick=ev=>{ev.preventDefault();abrirEvidencia(a.dataset.ev)});
 qs('#visor-cerrar').onclick=()=>qs('#visor').close();
+qs('#visor-copiar').onclick=()=>{try{navigator.clipboard.writeText(qs('#visor-pre').textContent);qs('#visor-copiar').textContent='Copiado'}catch(e){};
+ setTimeout(()=>qs('#visor-copiar').textContent='Copiar',1500)};
+qsa('.seg button').forEach(b=>b.onclick=()=>{const g=b.closest('.seg');qsa('button',g).forEach(x=>x.setAttribute('aria-pressed',x===b));
+ qs(g.dataset.objetivo).dataset.modo=b.dataset.modo});
+const tip=qs('#tip');document.addEventListener('pointerover',ev=>{const el=ev.target.closest('[data-tip]');if(!el){tip.hidden=true;return}
+ tip.innerHTML=el.dataset.tip;tip.hidden=false});
+document.addEventListener('pointermove',ev=>{if(tip.hidden)return;const w=tip.offsetWidth,h=tip.offsetHeight;
+ let x=ev.clientX+14,y=ev.clientY+14;if(x+w>innerWidth-8)x=ev.clientX-w-14;if(y+h>innerHeight-8)y=ev.clientY-h-14;tip.style.left=x+'px';tip.style.top=y+'px'});
 qs('#tema').onclick=()=>{const r=document.documentElement;const d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);
  r.dataset.theme=d?'light':'dark';try{localStorage.setItem('iso-tema',r.dataset.theme)}catch(e){}};
 try{const t=localStorage.getItem('iso-tema');if(t)document.documentElement.dataset.theme=t}catch(e){}
@@ -369,60 +382,317 @@ let ini='inicio';try{ini=localStorage.getItem('iso-tab')||'inicio'}catch(e){};if
 """
 
 CSS_ART = """
-header{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px}
-.cab{max-width:1400px;margin:0 auto;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
-.aviso{background:var(--warnbg);color:var(--ink);border-left:4px solid var(--warn);padding:8px 12px;margin:10px auto 0;max-width:1400px;font-size:13.5px}
-nav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;padding:0 8px}
-nav button{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);font:inherit;padding:10px 10px;cursor:pointer}
-nav button[aria-current="true"]{color:var(--head);border-bottom-color:var(--acc);font-weight:600}
-main{max-width:1400px;margin:0 auto;padding:8px 16px 60px}
-.filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
-.filtros input,.filtros select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
-.filtros input{flex:1;min-width:220px}.cuenta{color:var(--muted);font-size:13px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px}.kpi b{display:block;font-size:1.6rem;color:var(--head)}
-#tema{font:inherit;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer}
-dialog{width:min(1100px,95vw);max-height:90vh;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);padding:0}
-dialog::backdrop{background:rgba(0,0,0,.45)}.vcab{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line)}
-#visor-pre{margin:0;padding:12px;overflow:auto;max-height:78vh;font:12px/1.35 Consolas,monospace;white-space:pre}
-.evlist{columns:3 260px}.evlist li{break-inside:avoid}
+:root{--bg:#f3f5f9;--panel:#fff;--ink:#141a26;--muted:#5b6476;--line:#e2e6ee;--soft:#f0f3f8;--head:#0f2f57;--acc:#2a78d6;--serie:#2a78d6;
+--side:#0d1b2e;--side2:#13253d;--sideink:#c9d4e5;--sidemut:#7f8ea6;
+--good:#0ca30c;--warning:#fab219;--serious:#ec835a;--critical:#d03b3b;--sombra:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1218;--panel:#171b23;--ink:#eceef3;--muted:#a3abbb;--line:#2a303c;
+--soft:#1f2530;--head:#cfe0ff;--acc:#6aa7f0;--serie:#3987e5;--side:#0a0f17;--side2:#121a26;--sombra:none}}
+:root[data-theme="dark"]{--bg:#0f1218;--panel:#171b23;--ink:#eceef3;--muted:#a3abbb;--line:#2a303c;--soft:#1f2530;--head:#cfe0ff;
+--acc:#6aa7f0;--serie:#3987e5;--side:#0a0f17;--side2:#121a26;--sombra:none}
+body{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
+svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.side{background:var(--side);color:var(--sideink);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.marca{display:flex;gap:10px;align-items:center;padding:18px 18px 14px;border-bottom:1px solid var(--side2)}
+.logo{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#2a78d6,#1b4f91);display:grid;place-items:center;color:#fff}
+.logo svg{width:20px;height:20px}.marca b{display:block;color:#fff;font-size:15px;line-height:1.2}.marca small{color:var(--sidemut);font-size:12px}
+.grupo{padding:14px 10px 2px}.grupo p{margin:0 10px 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--sidemut)}
+.side button{display:flex;gap:10px;align-items:center;width:100%;background:none;border:0;color:inherit;font:inherit;font-size:14px;
+padding:8px 10px;border-radius:8px;cursor:pointer;text-align:left}
+.side button:hover{background:var(--side2);color:#fff}
+.side button[aria-current="true"]{background:#1d3a5f;color:#fff;box-shadow:inset 3px 0 0 #6aa7f0}
+.side .cnt{margin-left:auto;font-size:11px;background:var(--side2);color:var(--sideink);padding:1px 7px;border-radius:10px}
+.pie{margin-top:auto;padding:14px 18px;border-top:1px solid var(--side2);font-size:12px;color:var(--sidemut)}
+.pie b{color:var(--sideink);display:block;font-size:13px}
+.contenido{min-width:0;display:flex;flex-direction:column}
+.barra{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:12px;padding:10px 24px;background:var(--panel);border-bottom:1px solid var(--line)}
+#migas{color:var(--muted);font-size:13.5px}.barra .esp{flex:1}
+.insignia{display:inline-flex;gap:6px;align-items:center;font-size:12px;padding:4px 10px;border-radius:20px;background:var(--soft);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
+.punto{width:8px;height:8px;border-radius:50%;background:var(--good)}
+.icono{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+#menu{display:none}
+main{padding:22px 24px 60px;max-width:1500px;width:100%}
+.pestana>header{margin-bottom:16px}.pestana>header h2{margin:0;border:0;padding:0;font-size:1.45rem;color:var(--ink)}
+.pestana>header p{margin:4px 0 0;color:var(--muted);max-width:900px}
+h2{color:var(--ink)}h3{font-size:1rem;margin:22px 0 8px;color:var(--ink)}
+.tarjeta,.tabla,.pestana>p,.pestana>ul,.pestana>div.texto{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--sombra)}
+.pestana>p,.pestana>ul,.pestana>div.texto{padding:14px 18px}.pestana>ul{padding-left:36px}
+.tabla{overflow:auto;max-height:72vh;margin:10px 0 18px}
+table{background:transparent;font-size:13px}th,td{border:0;border-bottom:1px solid var(--line);padding:9px 12px}
+th{background:var(--soft);font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);z-index:1}
+tbody tr:hover td{background:var(--soft)}table.mini{width:100%}table.mini th{text-transform:none;letter-spacing:0;font-size:13px;width:190px}
+.chip{border-radius:20px;padding:2px 9px;font-weight:600}
+.chip.ok{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--ink)}
+.chip.ok::before{content:"✓ ";color:var(--good)}
+.chip.warn{background:color-mix(in srgb,var(--warning) 22%,transparent);color:var(--ink)}
+.chip.warn::before{content:"! ";color:#b07800}
+.chip.bad{background:color-mix(in srgb,var(--critical) 16%,transparent);color:var(--ink)}
+.chip.bad::before{content:"✕ ";color:var(--critical)}
+.chip.pend{background:var(--soft);color:var(--muted)}
+.filtros{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:4px 0 0}
+.buscar{flex:1;min-width:240px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--muted)}
+.buscar input{flex:1;border:0;outline:0;background:none;font:inherit;padding:9px 0;color:var(--ink)}
+.filtros select{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+.cuenta{color:var(--muted);font-size:13px}
+.aviso{display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 12%,var(--panel));border:1px solid color-mix(in srgb,var(--warning) 40%,var(--line));
+border-radius:12px;padding:12px 16px;margin:0 0 18px;font-size:13.5px}
+.aviso svg{color:#b07800;margin-top:2px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:14px;margin:0 0 18px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--sombra)}
+.kpi .et{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.kpi .et svg{color:var(--acc)}
+.kpi b{display:block;font-size:2rem;line-height:1.1;margin:8px 0 2px;color:var(--ink);font-weight:650}
+.kpi b span{font-size:1rem;color:var(--muted);font-weight:500}.kpi small{display:block}
+.prog{height:8px;border-radius:4px;background:var(--soft);margin-top:10px;overflow:hidden;display:flex;gap:2px}
+.prog i{display:block;height:100%;border-radius:4px}
+.rejilla{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:14px}
+.c7{grid-column:span 7}.c5{grid-column:span 5}.c6{grid-column:span 6}.c12{grid-column:span 12}
+.tarjeta{padding:16px 18px;min-width:0}.tarjeta h3{margin:0;font-size:15px}.tarjeta .sub{color:var(--muted);font-size:13px;margin:2px 0 12px}
+.tcab{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:2px;background:var(--soft)}
+.seg button{font:inherit;font-size:12.5px;border:0;background:none;color:var(--muted);padding:4px 10px;border-radius:7px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:var(--sombra);font-weight:600}
+.calor{display:grid;grid-template-columns:28px repeat(5,1fr);gap:3px;font-size:12px}
+.calor .ej{display:grid;place-items:center;color:var(--muted)}
+.celda{min-height:62px;border-radius:6px;padding:5px;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;position:relative}
+.celda::after{content:attr(data-v);position:absolute;right:6px;bottom:3px;font-size:10.5px;color:var(--muted)}
+.lv-Bajo{background:color-mix(in srgb,var(--good) 14%,var(--panel))}.lv-Medio{background:color-mix(in srgb,var(--warning) 20%,var(--panel))}
+.lv-Alto{background:color-mix(in srgb,var(--serious) 24%,var(--panel))}.lv-Crítico{background:color-mix(in srgb,var(--critical) 24%,var(--panel))}
+.rk{font-size:11px;font-weight:650;padding:2px 6px;border-radius:5px;background:var(--panel);color:var(--ink);border:1px solid var(--line);cursor:default}
+#calor[data-modo="inh"] .rk.res,#calor[data-modo="res"] .rk.inh{display:none}
+.ejes{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin:6px 0 0 31px}
+.leyenda{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:10px}
+.leyenda span{display:inline-flex;gap:6px;align-items:center}.leyenda i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.pila{display:flex;gap:2px;height:28px;border-radius:6px;overflow:hidden;margin:6px 0 10px}.pila i{display:block;height:100%}
+.estados{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.estados div{border:1px solid var(--line);border-radius:10px;padding:10px 12px}.estados b{font-size:1.5rem;display:block;color:var(--ink)}
+.estados span{font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.lista{list-style:none;margin:0;padding:0}.lista li{padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.lista li:first-child{border-top:0}
+.barras{display:grid;grid-template-columns:auto 1fr auto;gap:7px 12px;align-items:center;font-size:13px}
+.barras .nom{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}.barras .nom b{margin-right:6px}
+.pista{height:14px;background:var(--soft);border-radius:4px;position:relative}
+.pista i{position:absolute;left:0;top:0;bottom:0;background:var(--serie);border-radius:0 4px 4px 0}
+.pista::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),var(--line) calc(25% - 1px) 25%)}
+.val{font-weight:650;min-width:30px;text-align:right}
+.escala{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;grid-column:2}
+.fases{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.fase{border:1px solid var(--line);border-radius:10px;padding:12px;position:relative;cursor:pointer;background:var(--panel)}
+.fase:hover{border-color:var(--acc)}.fase .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700;font-size:13px}
+.fase b{display:block;margin:8px 0 2px}.fase small{line-height:1.35;display:block}
+.linea{list-style:none;margin:0;padding:0}.linea li{display:grid;grid-template-columns:20px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.linea li:first-child{border-top:0}.linea .pt{width:12px;height:12px;border-radius:50%;margin-top:4px;border:3px solid var(--acc);background:var(--panel)}
+.linea .flujo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px;font-size:12.5px}
+.evlink{white-space:nowrap;font-family:Consolas,monospace;font-size:12.5px;text-decoration:none;padding:1px 6px;border-radius:5px;background:color-mix(in srgb,var(--acc) 10%,transparent)}
+.evlink:hover{text-decoration:underline}
+.btn{font:inherit;font-size:13px;display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
+.btn.prim{background:var(--acc);border-color:var(--acc);color:#fff}
+dialog{width:min(1100px,95vw);max-height:90vh;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);padding:0;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(8,12,20,.55)}
+.vcab{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.vcab small{display:block;font-family:Consolas,monospace}
+#visor-pre{margin:0;padding:14px 16px;overflow:auto;max-height:76vh;font:12px/1.4 Consolas,monospace;white-space:pre;background:var(--soft)}
+#tip{position:fixed;z-index:50;max-width:320px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+font-size:12.5px;box-shadow:0 8px 24px rgba(0,0,0,.18);pointer-events:none}
+.velo{display:none}
+@media (max-width:1100px){.c7,.c5,.c6{grid-column:span 12}.fases{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:900px){body{grid-template-columns:minmax(0,1fr)}.side{position:fixed;left:0;top:0;z-index:20;width:270px;transform:translateX(-100%);transition:transform .2s}
+body.menu-abierto .side{transform:none}body.menu-abierto .velo{display:block;position:fixed;inset:0;z-index:15;background:rgba(0,0,0,.45)}
+#menu{display:inline-grid}.barra{padding:10px 16px}main{padding:16px 16px 50px}.insignia.ocultable{display:none}.barras .nom{max-width:130px}}
+@media (max-width:560px){.fases,.estados{grid-template-columns:1fr}.kpi b{font-size:1.6rem}}
 """
+
+ICONOS = {
+    "inicio": '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+    "riesgos": '<path d="M12 3l9.5 16.5h-19z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/>',
+    "tareas": '<path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17"/>',
+    "controles": '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+    "observables": '<circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/>',
+    "matriz": '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',
+    "pruebas": '<path d="M9 3h6M10 3v6l-5.5 9.5A1.7 1.7 0 006 21h12a1.7 1.7 0 001.5-2.5L14 9V3"/><path d="M7 15h10"/>',
+    "actuar": '<path d="M20 12a8 8 0 11-2.3-5.7"/><path d="M20 4v5h-5"/>',
+    "evidencias": '<path d="M14 3H6.5A1.5 1.5 0 005 4.5v15A1.5 1.5 0 006.5 21h11a1.5 1.5 0 001.5-1.5V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+    "marco": '<path d="M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5z"/><path d="M4 19.5A2.5 2.5 0 006.5 22H20v-5"/>',
+    "ia": '<rect x="4" y="7" width="16" height="13" rx="2.5"/><path d="M12 3v4M9 12.5h.01M15 12.5h.01M9.5 16.5h5"/>',
+    "referencias": '<path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/>',
+    "db": '<ellipse cx="12" cy="5.5" rx="8" ry="2.5"/><path d="M4 5.5v13c0 1.4 3.6 2.5 8 2.5s8-1.1 8-2.5v-13"/><path d="M4 12c0 1.4 3.6 2.5 8 2.5s8-1.1 8-2.5"/>',
+    "aviso": '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>',
+    "menu": '<path d="M4 6h16M4 12h16M4 18h16"/>',
+    "tema": '<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>',
+}
+
+
+def icono(nombre):
+    return f'<svg viewBox="0 0 24 24" aria-hidden="true">{ICONOS[nombre]}</svg>'
+
+
+GRUPOS = [("General", ["inicio"]), ("Planificar", ["riesgos", "tareas", "controles"]),
+          ("Hacer y verificar", ["observables", "pruebas", "matriz", "evidencias"]), ("Actuar", ["actuar"]),
+          ("Documentación", ["marco", "referencias"])]
+
+DESCRIPCION = {
+    "inicio": "Estado general del laboratorio: riesgos, controles verificados, madurez y hallazgos.",
+    "riesgos": "Riesgos de confidencialidad valorados con probabilidad × impacto, antes (inherente) y después (residual) de los controles.",
+    "tareas": "Tareas críticas del DBA que afectan la confidencialidad, cómo se implementan en Oracle y si son demostrables en este entorno.",
+    "controles": "Controles del Anexo A de ISO/IEC 27001:2022 seleccionados, con su implementación en Oracle, evidencia y limitaciones.",
+    "observables": "Comprobaciones que un auditor externo puede ejecutar. El resultado se lee de la salida real de cada script VC.",
+    "pruebas": "Pruebas positivas y negativas. «Coincide» significa que la evidencia contiene el resultado esperado.",
+    "matriz": "Matriz de evaluación: tarea, riesgo, control, criterio de madurez 0–4, evidencia y estado.",
+    "evidencias": "Salidas reales de Oracle guardadas al ejecutar cada script. Haga clic en una para ver su contenido.",
+    "actuar": "Hallazgos corregidos y verificados de nuevo, propuestas de mejora y limitaciones del laboratorio.",
+    "marco": "Fundamentos teóricos del trabajo.",
+    "ia": "Tabla de uso de IA y declaración jurada (sección 8 del enunciado).",
+    "referencias": "Fuentes citadas en formato APA 7.",
+}
+
+FASE_EV = {"E": "Hacer (configuración)", "VC": "Verificar (control observable)", "PR": "Verificar (prueba)", "A": "Actuar (corrección)"}
+
+
+def cabecera_evidencia(nombre):
+    datos = {}
+    for linea in (leer_evidencia(nombre) or "").splitlines()[:8]:
+        m = re.match(r"^== (\w+)\s*: (.*)$", linea)
+        if m:
+            datos[m.group(1)] = m.group(2).strip()
+    return datos
+
+
+def seccion_evidencias():
+    filas = []
+    for x in evidencias_todas:
+        d = cabecera_evidencia(x)
+        fase = FASE_EV.get(x.split("-")[0], "—")
+        if x.endswith("_DESPUES") or "despues" in x:
+            fase = "Actuar (verificación repetida)"
+        res = resultado_vc(x) if x.startswith("VC-") else None
+        filas.append([ev_link(x, True), e(fase), f"<code>{e(d.get('Script', '—'))}</code>", e(d.get("Modo", "—")),
+                      e(d.get("Fecha", "—")[:16]), chip(ESTADO_VC[res]) if res else "—"])
+    return tabla(["Evidencia", "Fase PHVA", "Script", "Modo de conexión", "Fecha", "Resultado"], filas, "t-evidencias")
+
+
+def tablero(n):
+    nivel_cls = {"Bajo": "var(--good)", "Medio": "var(--warning)", "Alto": "var(--serious)", "Crítico": "var(--critical)"}
+    # Mapa de calor 5×5: filas = probabilidad (5 arriba), columnas = impacto.
+    celdas = []
+    for p in range(5, 0, -1):
+        celdas.append(f'<div class="ej">{p}</div>')
+        for i in range(1, 6):
+            marcas = ""
+            for r in P["riesgos"]:
+                for modo, (rp, ri) in (("inh", (r["p"], r["i"])), ("res", (r["p_res"], r["i_res"]))):
+                    if (rp, ri) == (p, i):
+                        v = rp * ri
+                        marcas += (f'<span class="rk {modo}" data-tip="<b>{e(r["id"])}</b> · {e(r["amenaza"])}<br>'
+                                   f'{"Inherente" if modo == "inh" else "Residual"}: {rp} × {ri} = {v} ({nivel(v)})">{e(r["id"][-2:])}</span>')
+            celdas.append(f'<div class="celda lv-{nivel(p * i)}" data-v="{p * i}">{marcas}</div>')
+    criticos_inh = sum(nivel(r["inh"]) == "Crítico" for r in P["riesgos"])
+    criticos_res = sum(nivel(r["res"]) == "Crítico" for r in P["riesgos"])
+    total_vc = len(T["observables"])
+    seg = lambda cant, color: f'<i style="flex:{cant};background:{color}"></i>' if cant else ""
+    # Solo las comprobaciones VC en PARCIAL; el motivo se toma de la fila de la matriz del mismo control.
+    just = {f["control"]: f["justificacion"] for f in M["filas"]}
+    parciales = "".join(f'<li>{chip(o["estado"])} <b>{e(o["id"])} · {e(o["control"])}</b> — {e(just.get(o["control"], ""))}</li>'
+                        for o in T["observables"] if o["estado"] in ("Parcial", "No cumple"))
+    titulos = {c["id"]: c["titulo"] for c in P["controles"]}
+    barras = "".join(
+        f'<div class="nom" data-tip="<b>{e(f["control"])}</b> {e(titulos.get(f["control"], ""))}<br>{e(f["justificacion"])}">'
+        f'<b>{e(f["control"])}</b>{e(titulos.get(f["control"], ""))}</div>'
+        f'<div class="pista" data-tip="<b>{e(f["control"])}</b>: nivel {f["nivel"]} de 4 · {e(f["estado_final"])}"><i style="width:{f["nivel"] * 25}%"></i></div>'
+        f'<div class="val">{f["nivel"]}</div>' for f in M["filas"])
+    vc07_antes = ESTADO_VC[resultado_vc("VC-07_acceso_privilegiado")]
+    vc07_desp = ESTADO_VC[resultado_vc("VC-07_acceso_privilegiado_DESPUES")]
+    ev = lambda x: ev_link(x, True)
+    hallazgos = f"""
+<li><span class="pt"></span><div><b>Cuenta con SELECT ANY TABLE (A.8.2)</b><div class="flujo">{ev('VC-07_acceso_privilegiado')} {chip(vc07_antes)} →
+ {ev('A-01_revocar_privilegio')} → {ev('VC-07_acceso_privilegiado_DESPUES')} {chip(vc07_desp)}</div></div></li>
+<li><span class="pt"></span><div><b>El DBA modifica las reglas de VPD (A.8.2, A.8.15)</b><div class="flujo">{ev('PR-19_dba_reglas_antes')} sin auditar →
+ {ev('A-02_auditar_reglas')} → {ev('PR-19_dba_reglas_despues')} {chip('Auditado', 'ok')} <small>se detecta, no se impide</small></div></div></li>
+<li><span class="pt"></span><div><b>Data Pump exporta en claro datos TDE (A.8.12, A.8.13)</b><div class="flujo">{ev('PR-16_respaldos_cifrados')}
+ ORA-39173 / ORA-00439 → respaldos RMAN cifrados {ev('E-11_rman_cifrado')} {chip('Parcial')}</div></div></li>
+<li><span class="pt"></span><div><b>Columnas sin clasificar (A.5.12)</b><div class="flujo">primera ejecución: 4 columnas de VENTAS →
+ script 04 corregido → {ev('VC-01_clasificacion')} {chip(ESTADO_VC[resultado_vc('VC-01_clasificacion')])}</div></div></li>"""
+    fases = [("1", "Planificar", f"{len(P['riesgos'])} riesgos · {len(P['tareas'])} tareas · {len(P['controles'])} controles", "riesgos"),
+             ("2", "Hacer", "TDE, roles y perfiles, VPD, Redaction, auditoría, copia DEV, RMAN y red", "evidencias"),
+             ("3", "Verificar", f"{total_vc} comprobaciones · {n['pr_total']} pruebas", "observables"),
+             ("4", "Actuar", "2 correcciones verificadas · 7 propuestas", "actuar")]
+    fases_html = "".join(f'<div class="fase" data-t="{d}" role="button" tabindex="0"><span class="n">{k}</span><b>{t}</b><small>{s}</small></div>'
+                         for k, t, s, d in fases)
+    return f"""
+<div class="aviso">{icono('aviso')}<div><strong>Modo consulta.</strong> {e(P['meta']['aviso'])}</div></div>
+<div class="kpis">
+<div class="kpi"><div class="et">{icono('riesgos')}Riesgos críticos</div><b>{criticos_inh} <span>→ {criticos_res} tras controles</span></b>
+<small>de {len(P['riesgos'])} riesgos valorados</small></div>
+<div class="kpi"><div class="et">{icono('observables')}Controles observables</div><b>{n['vc_cumple']} <span>/ {total_vc} en CUMPLE</span></b><small>{n['vc_parcial']} parcial · {n['vc_no']} no cumple</small>
+<div class="prog">{seg(n['vc_cumple'], 'var(--good)')}{seg(n['vc_parcial'], 'var(--warning)')}{seg(n['vc_no'], 'var(--critical)')}{seg(n['vc_pend'], 'var(--line)')}</div></div>
+<div class="kpi"><div class="et">{icono('pruebas')}Pruebas</div><b>{n['pr_ok']} <span>/ {n['pr_total']} coinciden</span></b>
+<small>con el resultado esperado</small><div class="prog">{seg(n['pr_ok'], 'var(--good)')}{seg(n['pr_total'] - n['pr_ok'], 'var(--critical)')}</div></div>
+<div class="kpi"><div class="et">{icono('matriz')}Madurez promedio</div><b>{n['madurez']:.1f} <span>/ 4</span></b>
+<small>matriz: {n['mz_cumple']} cumple · {n['mz_parcial']} parcial</small><div class="prog"><i style="width:{n['madurez'] / 4 * 100:.0f}%;background:var(--serie)"></i></div></div>
+</div>
+<div class="rejilla">
+<section class="tarjeta c12"><div class="tcab"><div><h3>Ciclo PHVA</h3><p class="sub">Haga clic en una fase para ir a su detalle.</p></div></div>
+<div class="fases">{fases_html}</div></section>
+<section class="tarjeta c7"><div class="tcab"><div><h3>Mapa de calor de riesgos</h3><p class="sub">Probabilidad × impacto (escala 1–5). Pase el cursor sobre un riesgo.</p></div>
+<div class="seg" data-objetivo="#calor" role="group" aria-label="Vista"><button data-modo="inh" aria-pressed="true">Inherente</button><button data-modo="res" aria-pressed="false">Residual</button></div></div>
+<div id="calor" data-modo="inh"><div class="calor">{''.join(celdas)}</div>
+<div class="ejes"><span>Impacto 1</span><span>→</span><span>5</span></div></div>
+<div class="leyenda">{''.join(f'<span><i style="background:{c}"></i>{k}</span>' for k, c in nivel_cls.items())}<span>Eje vertical: probabilidad</span></div></section>
+<section class="tarjeta c5"><h3>Resultado de las comprobaciones</h3><p class="sub">{total_vc} scripts VC de solo lectura, resultado leído de la evidencia.</p>
+<div class="estados"><div><b>{n['vc_cumple']}</b><span>{chip('Cumple')}</span></div><div><b>{n['vc_parcial']}</b><span>{chip('Parcial')}</span></div>
+<div><b>{n['vc_no']}</b><span>{chip('No cumple')}</span></div></div>
+<div class="pila" aria-hidden="true">{seg(n['vc_cumple'], 'var(--good)')}{seg(n['vc_parcial'], 'var(--warning)')}{seg(n['vc_no'], 'var(--critical)')}</div>
+<ul class="lista">{parciales}</ul></section>
+<section class="tarjeta c6"><h3>Madurez por control</h3><p class="sub">Nivel alcanzado en la matriz (0 inexistente – 4 gestionado).</p>
+<div class="barras">{barras}<span></span><div class="escala"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div><span></span></div></section>
+<section class="tarjeta c6"><h3>Hallazgos y correcciones</h3><p class="sub">Cada paso enlaza a su evidencia.</p><ul class="linea">{hallazgos}</ul></section>
+<section class="tarjeta c12"><h3>Entorno verificado</h3><p class="sub">Datos tomados del diagnóstico E-00.</p>{ENTORNO}</section>
+</div>"""
 
 
 def artefacto():
     n = resumen_numeros()
-    gen = datetime.now().strftime("%Y-%m-%d %H:%M")
-    inicio = f"""
-<h2>Resumen</h2>
-<p>{e(P['meta']['titulo'])}. Laboratorio en Oracle con datos ficticios, organizado con PHVA. Cada control ISO tiene una comprobación técnica y pruebas cuyas salidas reales se pueden abrir desde este artefacto.</p>
-<div class="kpis">
-<div class="kpi"><b>{len(P['riesgos'])}</b>riesgos de confidencialidad</div>
-<div class="kpi"><b>{len(P['tareas'])}</b>tareas críticas del DBA</div>
-<div class="kpi"><b>{n['vc_cumple']} / {len(T['observables'])}</b>comprobaciones observables en CUMPLE ({n['vc_parcial']} parcial, {n['vc_no']} no cumple)</div>
-<div class="kpi"><b>{n['pr_ok']} / {n['pr_total']}</b>pruebas con el resultado esperado</div>
-<div class="kpi"><b>{n['madurez']:.1f}</b>madurez promedio (0–4) · matriz: {n['mz_cumple']} cumple, {n['mz_parcial']} parcial</div>
-</div>
-<h3>Entorno verificado</h3>{ENTORNO}
-<h3>Metodología PHVA</h3>{PHVA}
-<h3>Evidencias registradas ({len(evidencias_todas)})</h3>
-<ul class="evlist">{''.join(f'<li>{ev_link(x, True)}</li>' for x in evidencias_todas)}</ul>
-"""
-    secciones = "".join(f'<section class="pestana" id="{i}" hidden><h2>{e(t)}</h2>{inicio if c is None else c}</section>'
-                        for i, t, c in bloques(True))
-    botones = "".join(f'<button data-t="{i}">{e(t)}</button>' for i, t, _ in bloques(True))
+    gen = datetime.now().strftime("%d/%m/%Y %H:%M")
+    contenido = {i: (t, c) for i, t, c in bloques(True)}
+    contenido["inicio"] = ("Panel general", tablero(n))
+    contenido["evidencias"] = ("Evidencias", seccion_evidencias())
+    # La sección de uso de IA se presenta en el informe y en la tabla firmada, no en el artefacto.
+    del contenido["ia"]
+    contenido["marco"] = (contenido["marco"][0], f'<div class="texto">{contenido["marco"][1]}</div>')
+    contenido["actuar"] = (contenido["actuar"][0], f'<div class="texto">{contenido["actuar"][1]}</div>')
+    contenido["referencias"] = (contenido["referencias"][0], f'<div class="texto">{contenido["referencias"][1]}</div>')
+    cuenta = {"riesgos": len(P["riesgos"]), "tareas": len(P["tareas"]), "controles": len(P["controles"]),
+              "observables": len(T["observables"]), "pruebas": n["pr_total"], "matriz": len(M["filas"]),
+              "evidencias": len(evidencias_todas)}
+    menu = ""
+    for grupo, ids in GRUPOS:
+        menu += f'<div class="grupo"><p>{e(grupo)}</p>'
+        for i in ids:
+            c = f'<span class="cnt">{cuenta[i]}</span>' if i in cuenta else ""
+            menu += (f'<button data-t="{i}" data-grupo="{e(grupo)}" data-nombre="{e(contenido[i][0])}">'
+                     f'{icono(i)}<span>{e(contenido[i][0])}</span>{c}</button>')
+        menu += "</div>"
+    secciones = "".join(f'<section class="pestana" id="{i}" hidden><header><h2>{e(t)}</h2><p>{e(DESCRIPCION[i])}</p></header>{c}</section>'
+                        for i, (t, c) in contenido.items())
+
     def incrustar(nombre):
         # Evita que un "</script>" dentro de la evidencia cierre la etiqueta
         return re.sub(r"</(script)", r"<\\/\1", leer_evidencia(nombre) or "", flags=re.I)
-    textos = "".join(f'<script type="text/plain" id="txt-{e(x)}">{incrustar(x)}</script>'
-                     for x in evidencias_todas)
+    textos = "".join(f'<script type="text/plain" id="txt-{e(x)}">{incrustar(x)}</script>' for x in evidencias_todas)
     return f"""<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ISO 27001 Confidencialidad Oracle</title><style>{CSS}{CSS_ART}</style></head><body>
-<header><div class="cab"><div><h1>{e(P['meta']['titulo'])}</h1>
-<small>{e(P['meta']['estudiante'])} · {e(P['meta']['curso'])} · {e(P['meta']['escuela'])} · Prof. {e(P['meta']['profesor'])} · {e(P['meta']['ciclo'])}</small></div>
-<button id="tema" type="button">Tema claro/oscuro</button></div>
-<div class="aviso"><strong>Aviso:</strong> {e(P['meta']['aviso'])} Generado el {gen} a partir de <code>evidencias/</code>.</div></header>
-<nav aria-label="Secciones">{botones}</nav><main>{secciones}</main>
-<dialog id="visor"><div class="vcab"><strong id="visor-titulo"></strong><button id="visor-cerrar" type="button">Cerrar</button></div><pre id="visor-pre"></pre></dialog>
+<aside class="side" aria-label="Módulos"><div class="marca"><span class="logo">{icono('controles')}</span><div><b>Confidencialidad Oracle</b><small>ISO/IEC 27001:2022 · PHVA</small></div></div>
+<nav>{menu}</nav>
+<div class="pie"><b>{e(P['meta']['estudiante'])}</b>{e(P['meta']['curso'])}<br>Prof. {e(P['meta']['profesor'])} · {e(P['meta']['ciclo'])}</div></aside>
+<div class="velo"></div>
+<div class="contenido">
+<div class="barra"><button id="menu" class="icono" type="button" aria-label="Abrir menú">{icono('menu')}</button>
+<span id="migas"></span><span class="esp"></span>
+<span class="insignia ocultable">{icono('db')}Oracle 26ai Free · FREEPDB1</span>
+<span class="insignia ocultable"><span class="punto"></span>Evidencias del {gen}</span>
+<button id="tema" class="icono" type="button" aria-label="Cambiar tema claro/oscuro" title="Tema claro/oscuro">{icono('tema')}</button></div>
+<main>{secciones}</main></div>
+<div id="tip" hidden></div>
+<dialog id="visor"><div class="vcab"><div><strong id="visor-titulo"></strong><small id="visor-ruta"></small></div>
+<div><button id="visor-copiar" class="btn" type="button">Copiar</button> <button id="visor-cerrar" class="btn prim" type="button">Cerrar</button></div></div><pre id="visor-pre"></pre></dialog>
 {textos}<script>{JS}</script></body></html>"""
 
 
