@@ -56,10 +56,10 @@ Para que el profesor lo vea: en GitHub, *Settings → Collaborators → Add peop
 
 ## E. Verificaciones finales antes de entregar
 
-- [ ] Ejecuté `bash herramientas/ejecutar_todo.sh` y el resumen final coincide con la matriz.
+- [ ] **No** volví a ejecutar `bash herramientas/ejecutar_todo.sh`: sobrescribe las evidencias y se pierde el «antes» de VC-07 y VC-14 del 21/10.
 - [ ] Exporté el JSON de evaluaciones del módulo «Matriz y seguimiento» antes de regenerar (ver `docs/seguimiento-evaluaciones.md`).
 - [ ] Ejecuté `python herramientas/generar_entregables.py` después de la última corrida y comprobé que mis evaluaciones siguen en el artefacto.
 - [ ] Revisé que `.secrets/` no está en el repositorio (`git ls-files | grep secrets` no debe devolver nada).
 - [ ] El informe tiene mi nombre y las referencias en APA 7.
-- [ ] Completé la validación de la tabla de IA y firmé la declaración.
+- [ ] Firmé `entregables/Tabla_Uso_IA_Para_Firmar.pdf` y completé carné y fecha.
 - [ ] Pregunté al profesor si acepta 26ai Free en lugar de 21c XE (y lo anoté en el informe).
