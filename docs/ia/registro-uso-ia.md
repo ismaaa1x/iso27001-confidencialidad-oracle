@@ -24,6 +24,7 @@ Los prompts se transcriben **exactamente** como se escribieron, incluidas las fa
 | Claude Code (Claude Opus 5.5) | 16 · «okey bro no he hecho nada desde la ultima vez, necesito que me pongas en una carpeta aparte, por ejemplo todo lo que llevamos para entregar o avanzado en una carpeta llamada chatgpt» | Carpeta local `chatgpt/` con una copia ordenada de todo lo avanzado y un índice (`00-LEEME.md`). | Pendiente | — |
 | Claude Code (Claude Opus 5.5) | 17 · Texto completo en `docs/ia/prompt-17-seguimiento-historico.md` (seguimiento histórico de controles a partir de las fotos de la pizarra del 28/10/2026), más la línea «y dime despues de hacer esos cambios que es lo que tengo que hacer yo que no puedas hacer tu y falte para la entrega paso a paso» | Módulo «Matriz y seguimiento» del artefacto: registro de evaluaciones con revisiones, semáforo, gráfica de evolución por fechas, historial, indicadores, exportación e importación JSON, evaluaciones base recuperadas de las evidencias y datos de demostración separados; pruebas automatizadas en el navegador; documentación (`docs/seguimiento-evaluaciones.md`). | Pendiente | Fotos de la pizarra del 28/10/2026; enunciado del curso (escala 0–4, matriz) |
 | Claude Code (Claude Opus 5.5) | 18 · «veo que hay muchas carpetas sueltas en este proyecto, muchas versiones, puedes borrar lo que ests sobre guardado y dejar lo mas reciente limpio» (respuestas a la consulta: «Borrar ambas (Recomendado)» y «Sí, en material-del-curso/ (Recomendado)») | Inventario del proyecto; se eliminaron la copia `chatgpt/`, `chatgpt.zip` (desactualizado), `corrida.log` y la caché de Python; el enunciado y las fotos de la pizarra se ordenaron en `material-del-curso/`. | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 19 · «la carpeta de avance creo que ya se puede eliminar ya que solo era para mostrarsela al profesor» (respuesta a la consulta: «Borrar todo») | Se eliminó la carpeta `avance-profesor/` (PDF y HTML del avance, guiones personales, accesos directos y `.bat`); el PDF y el HTML del avance quedan en el historial de Git. | Pendiente | — |
 
 **Declaración Jurada:**
 
@@ -53,7 +54,7 @@ Firma: ______________________________ &nbsp;&nbsp; Carné: ____________________ 
 5. *Fuente:* el manual de licencias, con el nombre de la sección.
 
 ### Fila 03: nombre y documento explicativo
-1. Lea `avance-profesor/EXPLICACION-PARA-EL-PROFESOR.md` completo. ¿Puede explicar cada párrafo con sus palabras? Lo que no entienda, investíguelo o corríjalo.
+1. El documento explicativo del avance se usó en la reunión con el profesor y luego se eliminó junto con la carpeta del avance (fila 19). Describa cómo lo usó y qué ajustó.
 2. *Ejemplo:* «Revisé la explicación, corregí [X] y comprobé que los datos coinciden con el informe».
 
 ### Fila 04: laboratorio, scripts, evidencias y documentos (la más importante)
@@ -94,6 +95,9 @@ Firma: ______________________________ &nbsp;&nbsp; Carné: ____________________ 
 ### Fila 18: limpieza
 1. Revise que la carpeta del proyecto solo tenga las carpetas actuales y que `material-del-curso/` tenga el enunciado y las 5 fotos.
 
+### Fila 19: eliminación de la carpeta del avance
+1. Confirme que ya no necesita el material del avance; el PDF se puede recuperar del historial de Git si hiciera falta.
+
 ### Al terminar
 - [ ] Ninguna fila dice «Pendiente».
 - [ ] Si usó otra IA (por ejemplo, ChatGPT para redactar algún prompt), agregue su propia fila con esa herramienta y el prompt exacto.
@@ -110,3 +114,4 @@ Para transparencia, la IA también:
 - Consultó documentación en línea de Oracle, la Ley 8968 (MICITT/SCIJ) y fuentes secundarias sobre ISO 27001:2022 (el texto de la norma es de pago y no estuvo disponible).
 - Creó el repositorio privado en GitHub con la cuenta del estudiante y subió el proyecto, con su autorización.
 - Eliminó, a pedido del estudiante, archivos duplicados o temporales (`chatgpt/`, `chatgpt.zip`, `corrida.log`, caché de Python) y movió el material del curso a `material-del-curso/`.
+- Eliminó, a pedido del estudiante, la carpeta `avance-profesor/`.

@@ -3,11 +3,6 @@
 *.log
 # Material del profesor (no se publica)
 material-del-curso/
-# Notas personales para la reunión de avance (no se publican)
-avance-profesor/EXPLICACION-PARA-EL-PROFESOR.md
-avance-profesor/*.lnk
-avance-profesor/*.bat
-avance-profesor/EXPLICACION-ARTEFACTO.md
 __pycache__/
 # Copia local de todo el avance (no se publica)
 chatgpt/
