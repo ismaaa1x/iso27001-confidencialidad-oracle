@@ -23,6 +23,7 @@ Los prompts se transcriben **exactamente** como se escribieron, incluidas las fa
 | Claude Code (Claude Opus 5.5) | 15 · «no puedes correr los scrips y que se vea en mi coomputadora ?» | Script de demostración en vivo `herramientas/demo.sh` (8 pasos que no modifican el laboratorio ni las evidencias) y acceso directo local. | Pendiente | — |
 | Claude Code (Claude Opus 5.5) | 16 · «okey bro no he hecho nada desde la ultima vez, necesito que me pongas en una carpeta aparte, por ejemplo todo lo que llevamos para entregar o avanzado en una carpeta llamada chatgpt» | Carpeta local `chatgpt/` con una copia ordenada de todo lo avanzado y un índice (`00-LEEME.md`). | Pendiente | — |
 | Claude Code (Claude Opus 5.5) | 17 · Texto completo en `docs/ia/prompt-17-seguimiento-historico.md` (seguimiento histórico de controles a partir de las fotos de la pizarra del 28/10/2026), más la línea «y dime despues de hacer esos cambios que es lo que tengo que hacer yo que no puedas hacer tu y falte para la entrega paso a paso» | Módulo «Matriz y seguimiento» del artefacto: registro de evaluaciones con revisiones, semáforo, gráfica de evolución por fechas, historial, indicadores, exportación e importación JSON, evaluaciones base recuperadas de las evidencias y datos de demostración separados; pruebas automatizadas en el navegador; documentación (`docs/seguimiento-evaluaciones.md`). | Pendiente | Fotos de la pizarra del 28/10/2026; enunciado del curso (escala 0–4, matriz) |
+| Claude Code (Claude Opus 5.5) | 18 · «veo que hay muchas carpetas sueltas en este proyecto, muchas versiones, puedes borrar lo que ests sobre guardado y dejar lo mas reciente limpio» (respuestas a la consulta: «Borrar ambas (Recomendado)» y «Sí, en material-del-curso/ (Recomendado)») | Inventario del proyecto; se eliminaron la copia `chatgpt/`, `chatgpt.zip` (desactualizado), `corrida.log` y la caché de Python; el enunciado y las fotos de la pizarra se ordenaron en `material-del-curso/`. | Pendiente | — |
 
 **Declaración Jurada:**
 
@@ -81,7 +82,7 @@ Firma: ______________________________ &nbsp;&nbsp; Carné: ____________________ 
 2. Fila 08: «Seguí esta guía para completar la validación».
 
 ### Filas 09 a 16: ajustes del avance, artefacto, demo y copia
-1. Abra cada cosa que se menciona y compruebe que hace lo que dice la fila: el PDF del avance sin consultas, el repositorio sin notas personales, los accesos directos, el artefacto rediseñado sin la sección de IA, la demo en vivo y la carpeta `chatgpt/`.
+1. Abra cada cosa que se menciona y compruebe que hace lo que dice la fila: el PDF del avance sin consultas, el repositorio sin notas personales, los accesos directos, el artefacto rediseñado sin la sección de IA y la demo en vivo. La carpeta `chatgpt/` se eliminó después (fila 18).
 2. *Ejemplo:* «Ejecuté la demo en vivo y vi los 8 pasos; comprobé que las evidencias no cambiaron».
 
 ### Fila 17: seguimiento histórico (pizarra del 28/10)
@@ -89,6 +90,9 @@ Firma: ______________________________ &nbsp;&nbsp; Carné: ____________________ 
 2. Siga la guía `docs/seguimiento-evaluaciones.md`: registre al menos 2 evaluaciones propias de un control, agregue otro a la gráfica, filtre por fechas, corrija una y exporte el JSON.
 3. Decida si deja o no los datos de demostración, y si registra una madurez para la ejecución «antes» de VC-07 (hoy queda «No asignada» porque nadie la evaluó en ese momento).
 4. *Ejemplo:* «Registré 2 evaluaciones de A.8.2 con mis capturas de SQL Developer, comparé A.8.2 y A.5.17 en la gráfica y exporté el respaldo».
+
+### Fila 18: limpieza
+1. Revise que la carpeta del proyecto solo tenga las carpetas actuales y que `material-del-curso/` tenga el enunciado y las 5 fotos.
 
 ### Al terminar
 - [ ] Ninguna fila dice «Pendiente».
@@ -105,3 +109,4 @@ Para transparencia, la IA también:
 - Creó el contenedor `iso27001-oracle` y ejecutó en él todos los scripts del repositorio. Las salidas están en `evidencias/`.
 - Consultó documentación en línea de Oracle, la Ley 8968 (MICITT/SCIJ) y fuentes secundarias sobre ISO 27001:2022 (el texto de la norma es de pago y no estuvo disponible).
 - Creó el repositorio privado en GitHub con la cuenta del estudiante y subió el proyecto, con su autorización.
+- Eliminó, a pedido del estudiante, archivos duplicados o temporales (`chatgpt/`, `chatgpt.zip`, `corrida.log`, caché de Python) y movió el material del curso a `material-del-curso/`.

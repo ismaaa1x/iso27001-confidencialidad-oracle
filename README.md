@@ -41,6 +41,7 @@ SeguridadBases/
 │  ├─ checklist-entregables.md    lista de verificación de rúbrica y evidencias
 │  └─ ia/                         prompts exactos, tabla de uso de IA y declaración jurada (sección 8)
 ├─ avance-profesor/               material del AVANCE (separado del proyecto final)
+├─ material-del-curso/            enunciado y fotos de la pizarra (local, NO se sube a Git)
 └─ .secrets/                      contraseñas locales (NO se sube a Git)
 ```
 
