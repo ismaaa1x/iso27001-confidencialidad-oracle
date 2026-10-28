@@ -39,7 +39,7 @@ SeguridadBases/
 │  ├─ informe/                    fragmentos del informe (marco teórico, etc.)
 │  ├─ guion-video.md              guion de la demostración de 5 minutos
 │  ├─ checklist-entregables.md    lista de verificación de rúbrica y evidencias
-│  └─ ia/                         prompts exactos, tabla de uso de IA y declaración jurada (sección 8)
+│  └─ ia/                         prompts exactos y registro de trabajo del uso de IA
 ├─ material-del-curso/            enunciado y fotos de la pizarra (local, NO se sube a Git)
 └─ .secrets/                      contraseñas locales (NO se sube a Git)
 ```
@@ -141,4 +141,4 @@ Las contraseñas de usuario deben cumplir `ORA12C_STRONG_VERIFY_FUNCTION`: 9 o m
 
 ## 7. Uso de inteligencia artificial
 
-El proyecto se desarrolló con apoyo de Claude Code (Anthropic). Los prompts exactos, el aporte de la IA y el estado de validación del estudiante están en `docs/ia/`. La tabla y la declaración jurada, con el formato de la sección 8 del enunciado, están en `docs/ia/registro-uso-ia.md` y en `entregables/Tabla-Uso-IA-Firmada-ISO27001-Oracle.pdf` (sin firmar).
+El proyecto se desarrolló con apoyo de Claude Code (Anthropic). Los prompts exactos, el aporte de la IA y el estado de validación del estudiante están en `docs/ia/`. La versión oficial de la tabla de uso de IA, con el formato de la sección 8 del enunciado, la declaración jurada y los anexos A y B con los prompts 01 y 17 completos, es `entregables/Tabla_Uso_IA_Para_Firmar.pdf` (pendiente de firma). El generador no la crea ni la sobrescribe. `docs/ia/registro-uso-ia.md` queda como registro de trabajo.

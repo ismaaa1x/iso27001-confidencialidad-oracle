@@ -222,31 +222,15 @@ def seccion_referencias():
     return '<ol class="refs">' + "".join(f"<li>{r}</li>" for r in REFERENCIAS) + "</ol>"
 
 
+OFICIAL_IA = "entregables/Tabla_Uso_IA_Para_Firmar.pdf"
+
+
 def seccion_ia():
-    # Formato de la sección 8 del enunciado: 5 columnas y la declaración jurada inmediatamente debajo.
-    texto = (RAIZ / "docs" / "ia" / "registro-uso-ia.md").read_text(encoding="utf-8")
-    filas = []
-    for linea in texto.splitlines():
-        if linea.startswith("| Claude Code"):
-            celdas = [c.strip() for c in linea.strip().strip("|").split(" | ")]
-            filas.append([re.sub(r"`([^`]+)`", r"<code>\1</code>", e(c)) for c in celdas])
-    return (tabla(["Herramienta IA", "Prompt exacto utilizado", "Aporte de la IA",
-                   "Validación / Corrección del estudiante", "Fuente verificada"], filas, "t-ia", filtrable=False) +
-            "<p><small>El prompt 01 completo está en <code>docs/ia/prompt-01-analisis-inicial.md</code>.</small></p>"
-            "<p><strong>Declaración Jurada:</strong></p><p>Yo, <strong>Ismael Rojas Herrera</strong>, declaro que todo contenido generado "
-            "con IA ha sido declarado en la tabla anterior, validado contra fuentes oficiales (ISO, documentación del motor "
-            "de BD) y que asumo responsabilidad por su veracidad. Entiendo que omitir esta declaración constituye falta grave.</p>"
-            "<p class='firma'>Firma: ______________________________ &nbsp;&nbsp; Carné: ____________________ &nbsp;&nbsp; Fecha: ________________</p>")
-
-
-def tabla_ia_firmada():
-    # Entregable 5 («Tabla de uso de IA firmada») como documento aparte para imprimir y firmar.
-    return f"""<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tabla de uso de IA</title><style>:root{{color-scheme:light}}{CSS.split('@media (prefers-color-scheme:dark)')[0]}{CSS[CSS.index('*{box-sizing'):]}{CSS_INF}
-.firma{{margin-top:36px}}#t-ia th:nth-child(1){{width:11%}}#t-ia th:nth-child(2){{width:27%}}#t-ia th:nth-child(3){{width:24%}}#t-ia th:nth-child(4){{width:23%}}#t-ia th:nth-child(5){{width:15%}}#t-ia{{table-layout:fixed}}#t-ia td:first-child{{white-space:normal}}</style></head><body><main>
-<p>Universidad Nacional de Costa Rica · Escuela de Informática · {e(P['meta']['curso'])} · {e(P['meta']['ciclo'])}<br>
-Profesor: {e(P['meta']['profesor'])} · Estudiante: <strong>{e(P['meta']['estudiante'])}</strong></p>
-<h2 class="nobreak">Tabla de uso de IA</h2><p>{e(P['meta']['titulo'])}</p>{seccion_ia()}</main></body></html>"""
+    # La tabla oficial (entregable 5) la mantiene el estudiante en entregables/; el generador solo la referencia
+    # y nunca la crea ni la sobrescribe.
+    return ("<p>La tabla de uso de IA con el formato de la sección 8 del enunciado (Herramienta IA, Prompt exacto utilizado, "
+            "Aporte de la IA, Validación / Corrección del estudiante y Fuente verificada), la declaración jurada y los anexos A y B "
+            f"con los prompts 01 y 17 completos se entregan como documento aparte: <code>{OFICIAL_IA}</code>.</p>")
 
 
 ACTUAR = """
@@ -914,10 +898,8 @@ def main():
         (RAIZ / "entregables").mkdir(exist_ok=True)
         # Perfil propio para que Edge headless no choque con las ventanas abiertas del usuario.
         perfil = Path(tempfile.mkdtemp(prefix="edge-pdf-"))
-        ia = RAIZ / "docs" / "informe" / "tabla-uso-ia.html"
-        ia.write_text(tabla_ia_firmada(), encoding="utf-8")
-        for origen, nombre in ((inf, "Informe-ISO27001-Confidencialidad-Oracle.pdf"),
-                               (ia, "Tabla-Uso-IA-Firmada-ISO27001-Oracle.pdf")):
+        # Solo se genera el informe; la tabla de uso de IA oficial (OFICIAL_IA) no se toca.
+        for origen, nombre in ((inf, "Informe-ISO27001-Confidencialidad-Oracle.pdf"),):
             pdf = RAIZ / "entregables" / nombre
             subprocess.run([str(edge), "--headless=new", "--disable-gpu", "--no-pdf-header-footer", f"--user-data-dir={perfil}",
                             f"--print-to-pdf={pdf}", origen.as_uri()], check=False, capture_output=True, timeout=180)

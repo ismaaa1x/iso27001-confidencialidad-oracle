@@ -8,7 +8,7 @@ Marca cada casilla cuando **tú** lo hayas revisado.
 - [ ] **2. Scripts .sql de verificación** → `sql/20_verificacion/` (VC-01 a VC-15), más diagnóstico, laboratorio, pruebas, Actuar y limpieza.
 - [ ] **3. Repositorio Git** → ya está en GitHub (privado): `ismaaa1x/iso27001-confidencialidad-oracle`. Falta agregar al profesor o subirlo al Git institucional que él indique (ver sección D).
 - [ ] **4. Video de 5 minutos** → seguir `docs/guion-video.md`.
-- [ ] **5. Tabla de uso de IA firmada** → completar la validación en `docs/ia/registro-uso-ia.md`, regenerar y firmar `entregables/Tabla-Uso-IA-Firmada-ISO27001-Oracle.pdf` (tabla y declaración jurada con el formato de la sección 8).
+- [ ] **5. Tabla de uso de IA firmada** → versión oficial: `entregables/Tabla_Uso_IA_Para_Firmar.pdf` (tabla con el formato de la sección 8, declaración jurada y anexos A y B). Falta firmarla y completar carné y fecha.
 
 ## B. Rúbrica (100 pts)
 

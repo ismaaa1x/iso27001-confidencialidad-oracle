@@ -1,6 +1,8 @@
-# Tabla de uso de IA y declaración jurada
+# Tabla de uso de IA y declaración jurada (registro de trabajo)
 
-Formato de la sección 8 del enunciado («Uso ético y documentado de inteligencia artificial»): tabla con las columnas Herramienta IA, Prompt exacto utilizado, Aporte de la IA, Validación / Corrección del estudiante y Fuente verificada. Debajo va la declaración jurada. Es el entregable 5, «Tabla de uso de IA firmada». El informe PDF la incluye en la sección «Uso de IA», y también existe como documento aparte para imprimir y firmar: `entregables/Tabla-Uso-IA-Firmada-ISO27001-Oracle.pdf`.
+> **Versión oficial del entregable 5:** `entregables/Tabla_Uso_IA_Para_Firmar.pdf`. Ese documento reemplaza la tabla de este archivo. Este archivo se conserva como registro de trabajo y ya no se usa para generar ningún entregable.
+
+Formato de la sección 8 del enunciado («Uso ético y documentado de inteligencia artificial»): tabla con las columnas Herramienta IA, Prompt exacto utilizado, Aporte de la IA, Validación / Corrección del estudiante y Fuente verificada. Debajo va la declaración jurada. Es el entregable 5, «Tabla de uso de IA firmada». El informe PDF remite, en la sección «Uso de IA», a la versión oficial `entregables/Tabla_Uso_IA_Para_Firmar.pdf`.
 
 Los prompts se transcriben **exactamente** como se escribieron, incluidas las faltas de ortografía. Se registran los prompts que generaron contenido del trabajo (scripts, documentos, configuración o decisiones del proyecto). Las consultas puramente conversacionales, cuya respuesta no se incorporó a ningún entregable, no se incluyen. El prompt 01, por su extensión, está completo en `prompt-01-analisis-inicial.md`. Las columnas «Validación / Corrección del estudiante» y «Fuente verificada» quedan en **Pendiente** hasta que el estudiante las complete con lo que revisó personalmente.
 
@@ -101,8 +103,7 @@ Firma: ______________________________ &nbsp;&nbsp; Carné: ____________________ 
 ### Al terminar
 - [ ] Ninguna fila dice «Pendiente».
 - [ ] Si usó otra IA (por ejemplo, ChatGPT para redactar algún prompt), agregue su propia fila con esa herramienta y el prompt exacto.
-- [ ] Ejecute `python herramientas/generar_entregables.py` para actualizar el informe, el artefacto y el PDF para firmar.
-- [ ] Imprima y firme `entregables/Tabla-Uso-IA-Firmada-ISO27001-Oracle.pdf`, o fírmelo digitalmente.
+- [ ] Imprima y firme `entregables/Tabla_Uso_IA_Para_Firmar.pdf` (versión oficial), o fírmelo digitalmente, y complete carné y fecha.
 
 ## Herramientas y comandos que ejecutó la IA
 
