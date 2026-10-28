@@ -12,3 +12,6 @@ avance-profesor/EXPLICACION-ARTEFACTO.md
 __pycache__/
 # Copia local de todo el avance (no se publica)
 chatgpt/
+# Respaldos JSON de evaluaciones del artefacto (locales)
+respaldos/
+chatgpt.zip

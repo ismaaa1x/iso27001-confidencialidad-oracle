@@ -29,10 +29,13 @@ SeguridadBases/
 │  ├─ ejecutar.sh                 ejecuta un .sql en el contenedor y guarda la evidencia
 │  ├─ ejecutar_todo.sh            ejecuta el ciclo PHVA completo
 │  ├─ aplicar_cifrado_red.sh      aplica (o revierte) el cifrado de red
-│  └─ generar_entregables.py      genera el artefacto HTML y el informe
+│  ├─ demo.sh                     demostración en vivo (no modifica el laboratorio)
+│  ├─ generar_entregables.py      genera el artefacto HTML y el informe
+│  └─ plantillas/                 JS y CSS del módulo «Matriz y seguimiento»
 ├─ evidencias/                    salidas reales de cada script (E-xx, PR-xx, VC-xx, A-xx)
 ├─ docs/
-│  ├─ datos/                      riesgos, tareas, controles, matriz y pruebas (JSON)
+│  ├─ datos/                      riesgos, tareas, controles, matriz, pruebas y datos de demostración (JSON)
+│  ├─ seguimiento-evaluaciones.md guía del registro histórico, la gráfica y el respaldo de evaluaciones
 │  ├─ informe/                    fragmentos del informe (marco teórico, etc.)
 │  ├─ guion-video.md              guion de la demostración de 5 minutos
 │  ├─ checklist-entregables.md    lista de verificación de rúbrica y evidencias
@@ -96,6 +99,10 @@ bash herramientas/ejecutar.sh system sql/20_verificacion/VC-07_acceso_privilegia
 ```bash
 python herramientas/generar_entregables.py
 ```
+
+**Matriz y seguimiento en el artefacto:** en *Hacer y verificar → Matriz y seguimiento* se registran evaluaciones de los controles en el tiempo (madurez 0–4, estado con semáforo, evidencia y observaciones), se consultan en el historial y se comparan en una gráfica con filtro Desde/Hasta. Las evaluaciones manuales se guardan en el navegador: **exporte el JSON antes de regenerar, mover el archivo o cambiar de navegador**. Instrucciones completas en [`docs/seguimiento-evaluaciones.md`](docs/seguimiento-evaluaciones.md).
+
+**Demostración en vivo** (no modifica el laboratorio ni las evidencias): `bash herramientas/demo.sh`
 
 **Limpiar** el laboratorio:
 

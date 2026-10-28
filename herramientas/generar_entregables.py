@@ -177,7 +177,13 @@ def seccion_matriz(artefacto):
                       f'<ol class="crit" start="0">{crit}</ol>',
                       f'<span class="nivel">{f["nivel"]}</span><br><small>{e(f["justificacion"])}</small>',
                       f"<code>{e(f['evidencia'])}</code><br><small>{e(f['resultado_vc'])}</small>", est])
-    return (f"<p>{e(M['nota'])}</p>{esc}" +
+    seguimiento = "" if artefacto else (
+        "<p><strong>Seguimiento histórico.</strong> Esta tabla muestra la evaluación registrada al cierre del laboratorio "
+        f"(pruebas ejecutadas el {e(rango_ejecucion())}). En el artefacto, el módulo «Matriz y seguimiento» permite registrar "
+        "nuevas evaluaciones de cada control en distintas fechas (madurez 0–4, estado con semáforo, evidencia y observaciones), "
+        "consultar su historial y comparar la evolución de varios controles en una gráfica filtrada por fechas. "
+        "Ver <code>docs/seguimiento-evaluaciones.md</code>.</p>")
+    return (f"<p>{e(M['nota'])}</p>{seguimiento}{esc}" +
             tabla(["Tarea", "Riesgo", "Control", "Criterios 0–4 (el resaltado es el nivel alcanzado)",
                    "Madurez asignada", "Evidencia", "Estado"], filas, "t-matriz"))
 
@@ -536,7 +542,7 @@ DESCRIPCION = {
     "controles": "Controles del Anexo A de ISO/IEC 27001:2022 seleccionados, con su implementación en Oracle, evidencia y limitaciones.",
     "observables": "Comprobaciones que un auditor externo puede ejecutar. El resultado se lee de la salida real de cada script VC.",
     "pruebas": "Pruebas positivas y negativas. «Coincide» significa que la evidencia contiene el resultado esperado.",
-    "matriz": "Matriz de evaluación: tarea, riesgo, control, criterio de madurez 0–4, evidencia y estado.",
+    "matriz": "Matriz de evaluación (Tarea | Riesgo | Control | Criterio 0–4 | Evidencia | Estado) con seguimiento histórico: registro de evaluaciones, historial y evolución de la madurez en el tiempo.",
     "evidencias": "Salidas reales de Oracle guardadas al ejecutar cada script. Haga clic en una para ver su contenido.",
     "actuar": "Hallazgos corregidos y verificados de nuevo, propuestas de mejora y limitaciones del laboratorio.",
     "marco": "Fundamentos teóricos del trabajo.",
@@ -648,12 +654,177 @@ def tablero(n):
 </div>"""
 
 
+PLANTILLAS = Path(__file__).resolve().parent / "plantillas"
+ZONA_CR = "America/Costa_Rica"
+
+
+def ahora_cr():
+    """Fecha y hora actuales en Costa Rica (UTC-6 todo el año, sin horario de verano)."""
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo(ZONA_CR))
+    except Exception:  # Windows sin tzdata: Costa Rica no tiene horario de verano
+        from datetime import timedelta, timezone
+        return datetime.now(timezone(timedelta(hours=-6)))
+
+
+def datos_seguimiento():
+    """Catálogo de controles, evaluaciones base recuperadas de las evidencias y datos de demostración.
+
+    Solo se crea una evaluación base por cada script VC que tenga evidencia, resultado y fecha.
+    La madurez se toma de la matriz y únicamente para la ejecución final de cada control:
+    para las ejecuciones previas a una corrección no se asignó madurez y queda en null.
+    """
+    filas = {f["control"]: f for f in M["filas"]}
+    titulos = {c["id"]: c for c in P["controles"]}
+    obs = {o["control"]: o for o in T["observables"]}
+    catalogo = []
+    for c in P["controles"]:
+        f = filas[c["id"]]
+        catalogo.append({"id": c["id"], "titulo": c["titulo"], "tema": c["tema"], "tarea": f["tarea"], "riesgo": f["riesgo"],
+                         "criterios": f["criterios"], "vc": obs[c["id"]]["id"] if c["id"] in obs else ""})
+    base = []
+    for o in T["observables"]:
+        f = filas[o["control"]]
+        res = [(ev, r) for ev, r in o["resultados"] if r is not None]
+        for k, (ev, r) in enumerate(res):
+            fecha_ej = cabecera_evidencia(ev).get("Fecha", "")
+            m = re.match(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})", fecha_ej)
+            if not m:
+                continue  # sin fecha de ejecución no se puede ubicar en el tiempo: no se inventa
+            final = k == len(res) - 1
+            reg = {"id": f"base-{ev}", "origen": "base", "control": o["control"], "fecha": m.group(1), "hora": m.group(2),
+                   "fecha_ejecucion": fecha_ej, "evidencia": ev, "resultado_vc": ESTADO_VC[r],
+                   "responsable": f"Script {o['id']} (automático) y matriz del proyecto"}
+            if final:
+                motivo = f.get("motivo_estado")
+                reg.update(madurez=f["nivel"], estado=f["estado_final"],
+                           observaciones=f["justificacion"] + (f" Estado asignado en la matriz: {motivo}" if motivo else ""))
+            else:
+                reg.update(madurez=None, estado=ESTADO_VC[r],
+                           observaciones=f"Ejecución anterior a la corrección de la fase Actuar; el script dio {r}. "
+                                         "Para este momento no se asignó madurez: la matriz solo evaluó el estado final.")
+            base.append(reg)
+    demo = json.loads((RAIZ / "docs" / "datos" / "seguimiento_demo.json").read_text(encoding="utf-8"))
+    for d in demo["evaluaciones"]:
+        d["origen"] = "demo"
+        assert d["id"].startswith("demo-") and d["control"] in titulos, d["id"]
+    return {"version": 1, "zona_horaria": ZONA_CR,
+            "generado_en": ahora_cr().strftime("%d/%m/%Y %H:%M") + " (hora de Costa Rica)",
+            "ejecucion_evidencias": rango_ejecucion(),
+            "catalogo": catalogo, "base": base, "demo": demo["evaluaciones"], "aviso_demo": demo["aviso"]}
+
+
+def rango_ejecucion():
+    fechas = sorted(f for f in (cabecera_evidencia(x).get("Fecha", "")[:16] for x in evidencias_todas) if f)
+    if not fechas:
+        return "sin fecha registrada"
+    a, b = fechas[0], fechas[-1]
+    fa = f"{a[8:10]}/{a[5:7]}/{a[:4]}"
+    return f"{fa} {a[11:]}–{b[11:]}" if a[:10] == b[:10] else f"{fa} – {b[8:10]}/{b[5:7]}/{b[:4]}"
+
+
+def seguimiento_html():
+    estados = "".join(f'<option>{x}</option>' for x in ("Cumple", "Parcial", "No cumple"))
+    th = lambda *c: "".join(f"<th>{x}</th>" for x in c)
+    return f"""
+<div id="sg">
+<div id="sg-avisos" class="sg-avisos"></div>
+<div class="sg-barra" role="group" aria-label="Datos y período">
+ <div class="sg-campo"><span>Conjunto de datos</span><div class="sg-grupo-datos">
+  <label><input type="radio" name="sg-modo" value="real" checked> Resultados reales</label>
+  <label><input type="radio" name="sg-modo" value="demo"> Demostración</label></div></div>
+ <label class="sg-campo">Desde<input type="date" id="sg-desde"></label>
+ <label class="sg-campo">Hasta<input type="date" id="sg-hasta"></label>
+ <button type="button" class="sg-btn" id="sg-restablecer">Restablecer filtros</button>
+ <span class="sg-esp"></span>
+ <button type="button" class="sg-btn prim" id="sg-registrar">+ Registrar evaluación</button>
+ <button type="button" class="sg-btn" id="sg-exportar">Exportar JSON</button>
+ <button type="button" class="sg-btn" id="sg-importar">Importar JSON</button>
+ <input type="file" id="sg-archivo" accept="application/json,.json" hidden>
+ <div class="sg-error-periodo" id="sg-error-periodo" role="alert"></div>
+</div>
+<div id="sg-resultado"></div>
+<div class="sg-ind" id="sg-ind" aria-live="polite"></div>
+<p class="sg-nota" id="sg-ind-nota"></p>
+<p class="sg-nota"><span id="sg-guardado" class="sg-guardado"></span> · Pruebas ejecutadas en Oracle: {e(rango_ejecucion())} · Artefacto generado: <span id="sg-generado"></span>.
+ «Base · evidencia» = resultado recuperado de un archivo de <code>evidencias/</code>; «Manual» = registrado en esta interfaz, no es una ejecución automática en Oracle.</p>
+<div class="sg-tabs" role="tablist" aria-label="Vistas de la matriz">
+ <button class="sg-tab" role="tab" type="button" data-vista="resumen" id="sg-tab-resumen" aria-controls="sg-p-resumen">A. Resumen por control</button>
+ <button class="sg-tab" role="tab" type="button" data-vista="historial" id="sg-tab-historial" aria-controls="sg-p-historial">B. Historial</button>
+ <button class="sg-tab" role="tab" type="button" data-vista="evolucion" id="sg-tab-evolucion" aria-controls="sg-p-evolucion">C. Evolución (gráfica)</button>
+</div>
+<section class="sg-panel" id="sg-p-resumen" data-panel="resumen" role="tabpanel" aria-labelledby="sg-tab-resumen">
+ <p class="sg-nota">Matriz de evaluación con la <b>última evaluación de cada control dentro del período</b>. Si un control no tiene registros en el período aparece como «Sin evaluación en el período», sin arrastrar un resultado anterior.</p>
+ <div class="sg-tabla"><table id="sg-t-resumen"><thead><tr>{th("Tarea", "Riesgo", "Control", "Criterio 0–4", "Evidencia", "Estado", "Fecha", "Madurez", "Variación", "Observaciones", "Historial")}</tr></thead><tbody></tbody></table></div>
+</section>
+<section class="sg-panel" id="sg-p-historial" data-panel="historial" role="tabpanel" aria-labelledby="sg-tab-historial" hidden>
+ <div class="sg-filtros">
+  <label class="sg-campo">Control<select id="sg-h-control"></select></label>
+  <label class="sg-campo">Estado<select id="sg-h-estado"><option value="">Todos</option>{estados}</select></label>
+  <span class="sg-nota" id="sg-h-cuenta" style="margin:0"></span></div>
+ <p class="sg-nota">Todas las evaluaciones, de la más reciente a la más antigua, dentro del período elegido arriba. Si hay varias del mismo control en el mismo día se ordenan por hora y, sin hora, por el momento en que se registraron; la columna «N.º» indica su orden dentro del día.</p>
+ <div class="sg-tabla"><table id="sg-t-historial"><thead><tr>{th("Fecha", "Hora", "N.º", "Control", "Madurez", "Estado", "Origen", "Evidencia", "Observaciones", "Responsable", "Acciones")}</tr></thead><tbody></tbody></table></div>
+</section>
+<section class="sg-panel" id="sg-p-evolucion" data-panel="evolucion" role="tabpanel" aria-labelledby="sg-tab-evolucion" hidden>
+ <div class="sg-filtros">
+  <label class="sg-campo">Control<select id="sg-agregar-control"></select></label>
+  <button type="button" class="sg-btn prim" id="sg-agregar">Agregar a la gráfica</button>
+  <button type="button" class="sg-btn" id="sg-quitar-todos">Quitar todos</button>
+  <button type="button" class="sg-btn" id="sg-historial-completo">Ver historial completo</button>
+  <span class="sg-nota" id="sg-limite" style="margin:0"></span></div>
+ <div class="sg-sel" id="sg-chips" aria-label="Controles en la gráfica"></div>
+ <div id="sg-msg-grafica"></div>
+ <div class="sg-grafica" id="sg-grafica"></div>
+ <div class="sg-leyenda-nota">
+  <span><b>Color de la línea</b> = control (se mantiene mientras esté en la gráfica).</span>
+  <span><b>Semáforo</b> = estado de cada evaluación: <span class="sg-sem ok"><i aria-hidden="true">✓</i>Cumple</span> <span class="sg-sem warn"><i aria-hidden="true">!</i>Parcial</span> <span class="sg-sem bad"><i aria-hidden="true">✕</i>No cumple</span>. Aparece al señalar o seleccionar un punto.</span>
+  <span>Cada punto es una evaluación registrada; los segmentos solo unen observaciones puntuales y no representan mediciones intermedias. El eje horizontal es proporcional al tiempo; las evaluaciones sin hora se ubican al inicio de su día.</span></div>
+ <div class="sg-detalle" id="sg-detalle" aria-live="polite"></div>
+ <h3>Tendencia por control (en el período)</h3>
+ <div class="sg-tabla"><table id="sg-t-tendencia"><thead><tr>{th("Control", "Evaluaciones", "Con madurez", "Primera", "Última", "Tendencia (última vs. anterior)")}</tr></thead><tbody></tbody></table></div>
+</section>
+<dialog id="sg-dlg-form" class="sg-dialogo" aria-labelledby="sg-f-titulo">
+ <div class="vcab"><strong id="sg-f-titulo">Registrar evaluación</strong></div>
+ <form id="sg-form" class="sg-form" novalidate>
+  <ul class="sg-errores" id="sg-f-errores" tabindex="-1" role="alert"></ul>
+  <label class="sg-campo ancho"><span class="req">Control</span><select id="sg-f-control" required></select></label>
+  <div class="ancho" id="sg-f-guia"></div>
+  <label class="sg-campo"><span class="req">Fecha de evaluación</span><input type="date" id="sg-f-fecha" required></label>
+  <label class="sg-campo">Hora (opcional, hora de Costa Rica)<input type="time" id="sg-f-hora"></label>
+  <label class="sg-campo"><span class="req">Madurez (0–4)</span><select id="sg-f-madurez" required><option value="">Seleccione…</option>
+   <option value="0">0 · Inexistente</option><option value="1">1 · Inicial</option><option value="2">2 · Implementado parcialmente</option>
+   <option value="3">3 · Implementado y verificado</option><option value="4">4 · Gestionado</option></select></label>
+  <label class="sg-campo"><span class="req">Estado</span><select id="sg-f-estado" required><option value="">Seleccione…</option>{estados}</select>
+   <span class="sg-ayuda">No se calcula a partir de la madurez: elíjalo según el criterio del control y su evidencia.</span></label>
+  <label class="sg-campo ancho"><span class="req">Evidencia o referencia</span><input type="text" id="sg-f-evidencia" maxlength="500" placeholder="Ej.: VC-07 ejecutado en SQL Developer, captura 03"></label>
+  <label class="sg-campo ancho"><span class="req">Observaciones y justificación</span><textarea id="sg-f-observaciones" maxlength="2000"></textarea></label>
+  <label class="sg-campo ancho">Responsable de la evaluación (opcional)<input type="text" id="sg-f-responsable" maxlength="120"></label>
+  <label class="sg-campo ancho" id="sg-f-motivo-campo" hidden><span class="req">Motivo de la corrección</span><input type="text" id="sg-f-motivo" maxlength="500"
+   placeholder="Ej.: error de captura en la fecha"><span class="sg-ayuda">Se guarda una revisión con el valor anterior, la fecha del cambio y este motivo.</span></label>
+  <p class="sg-ayuda ancho" style="margin:0">Se guarda como evaluación <b>manual</b> en este navegador; no reemplaza las anteriores. Los campos con * son obligatorios.</p>
+  <div class="sg-pie-form"><button type="button" class="sg-btn" id="sg-f-cancelar">Cancelar</button><button type="submit" class="sg-btn prim">Guardar</button></div>
+ </form>
+</dialog>
+<dialog id="sg-dlg-rev" class="sg-dialogo" aria-labelledby="sg-rev-titulo">
+ <div class="vcab"><strong id="sg-rev-titulo">Revisiones</strong><button type="button" class="sg-btn prim" id="sg-rev-cerrar">Cerrar</button></div>
+ <div id="sg-rev-cuerpo"></div>
+</dialog>
+</div>"""
+
+
+def incrustar_json(obj):
+    # Evita que un "</script>" dentro de los datos cierre la etiqueta
+    return json.dumps(obj, ensure_ascii=False).replace("</", "<\\/")
+
+
 def artefacto():
     n = resumen_numeros()
-    gen = datetime.now().strftime("%d/%m/%Y %H:%M")
+    gen = ahora_cr().strftime("%d/%m/%Y %H:%M")
     contenido = {i: (t, c) for i, t, c in bloques(True)}
     contenido["inicio"] = ("Panel general", tablero(n))
     contenido["evidencias"] = ("Evidencias", seccion_evidencias())
+    contenido["matriz"] = ("Matriz y seguimiento", seguimiento_html())
     # La sección de uso de IA se presenta en el informe y en la tabla firmada, no en el artefacto.
     del contenido["ia"]
     contenido["marco"] = (contenido["marco"][0], f'<div class="texto">{contenido["marco"][1]}</div>')
@@ -678,7 +849,7 @@ def artefacto():
         return re.sub(r"</(script)", r"<\\/\1", leer_evidencia(nombre) or "", flags=re.I)
     textos = "".join(f'<script type="text/plain" id="txt-{e(x)}">{incrustar(x)}</script>' for x in evidencias_todas)
     return f"""<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ISO 27001 Confidencialidad Oracle</title><style>{CSS}{CSS_ART}</style></head><body>
+<title>ISO 27001 Confidencialidad Oracle</title><style>{CSS}{CSS_ART}{(PLANTILLAS / "seguimiento.css").read_text(encoding="utf-8")}</style></head><body>
 <aside class="side" aria-label="Módulos"><div class="marca"><span class="logo">{icono('controles')}</span><div><b>Confidencialidad Oracle</b><small>ISO/IEC 27001:2022 · PHVA</small></div></div>
 <nav>{menu}</nav>
 <div class="pie"><b>{e(P['meta']['estudiante'])}</b>{e(P['meta']['curso'])}<br>Prof. {e(P['meta']['profesor'])} · {e(P['meta']['ciclo'])}</div></aside>
@@ -687,13 +858,15 @@ def artefacto():
 <div class="barra"><button id="menu" class="icono" type="button" aria-label="Abrir menú">{icono('menu')}</button>
 <span id="migas"></span><span class="esp"></span>
 <span class="insignia ocultable">{icono('db')}Oracle 26ai Free · FREEPDB1</span>
-<span class="insignia ocultable"><span class="punto"></span>Evidencias del {gen}</span>
+<span class="insignia ocultable" title="Fecha de ejecución de los scripts en Oracle"><span class="punto"></span>Pruebas: {e(rango_ejecucion())}</span>
+<span class="insignia ocultable" title="Fecha en que se generó este HTML">Generado: {gen}</span>
 <button id="tema" class="icono" type="button" aria-label="Cambiar tema claro/oscuro" title="Tema claro/oscuro">{icono('tema')}</button></div>
 <main>{secciones}</main></div>
 <div id="tip" hidden></div>
 <dialog id="visor"><div class="vcab"><div><strong id="visor-titulo"></strong><small id="visor-ruta"></small></div>
 <div><button id="visor-copiar" class="btn" type="button">Copiar</button> <button id="visor-cerrar" class="btn prim" type="button">Cerrar</button></div></div><pre id="visor-pre"></pre></dialog>
-{textos}<script>{JS}</script></body></html>"""
+{textos}<script type="application/json" id="datos-seguimiento">{incrustar_json(datos_seguimiento())}</script>
+<script>{JS}</script><script>{(PLANTILLAS / "seguimiento.js").read_text(encoding="utf-8")}</script></body></html>"""
 
 
 CSS_INF = """

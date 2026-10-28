@@ -14,6 +14,15 @@ Los prompts se transcriben **exactamente** como se escribieron, incluidas las fa
 | Claude Code (Claude Opus 5.5) | 06 · «acuerdate que eso de la declaracion de la ia  hay que hacerlo como el profesor lo puso en el pdf que te pase» | Ajuste de esta tabla al formato de la sección 8 (5 columnas y declaración jurada inmediatamente debajo); documento aparte para firmar. | Pendiente | Enunciado del curso, sección 8 |
 | Claude Code (Claude Opus 5.5) | 07 · «eso del uso de ia te dije que cambiaras mis respuestas osea prompts para que sean mas profesionales y enfocadas en un uso de la herramienta ia, se ve muy poco profesional, el unico prompt que dejas es el que te mande largo, despues en el md que me diste con la explicacion del avance, corrijelo y pon tal y como yo lo voy a decir, osea que yo voy a leer eso para explicarle al profesor, que salga lo que voy a hacer de proyecto, como lo voy a hacer y lo que llevo hasta el momento» | Reescritura de `avance-profesor/EXPLICACION-PARA-EL-PROFESOR.md` como guion de lectura (qué es el proyecto, cómo se hará, avance). Los prompts registrados no se modificaron, porque el enunciado exige el prompt exacto. | Pendiente | — |
 | Claude Code (Claude Opus 5.5) | 08 · «ok, haz el recorte y la guía» | Se dejaron en la tabla solo los prompts que generaron contenido del trabajo; guía de validación por fila (sección «Guía para completar la validación»). | Pendiente | Enunciado del curso, sección 8 |
+| Claude Code (Claude Opus 5.5) | 09 · «bro por que en el pdf y el html del avance escribiste las preguntas al profesor ? ese no es el documento de confidencialidad ?» | Se quitó la sección de consultas al profesor del HTML y del PDF del avance. | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 10 · «si, sacalo del repositorio» | Las notas personales para la reunión dejaron de publicarse en el repositorio (`.gitignore`). | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 11 · «si, pon los accesos directos en la carpeta del avance» | Accesos directos locales al artefacto y al informe, y archivo `.bat` para iniciar el contenedor. | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 12 · «y digamos si tuvieras que explicar el artefacto completo que me pusiste en evidencias como lo harias, dame una explicacion para yo leerla» | Guion personal para explicar el artefacto (`avance-profesor/EXPLICACION-ARTEFACTO.md`, no publicado). | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 13 · «y dame ese html mejor visualmente como si fuera un sistea completo pero solo el front» | Rediseño del artefacto: menú lateral por fases PHVA, panel general con indicadores, mapa de calor de riesgos, madurez por control, hallazgos y módulo de evidencias con visor. | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 14 · «y borra del html la parte de la ia eso lo hacemos despues» | Se quitó la sección de uso de IA del artefacto; se mantiene en el informe y en esta tabla. | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 15 · «no puedes correr los scrips y que se vea en mi coomputadora ?» | Script de demostración en vivo `herramientas/demo.sh` (8 pasos que no modifican el laboratorio ni las evidencias) y acceso directo local. | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 16 · «okey bro no he hecho nada desde la ultima vez, necesito que me pongas en una carpeta aparte, por ejemplo todo lo que llevamos para entregar o avanzado en una carpeta llamada chatgpt» | Carpeta local `chatgpt/` con una copia ordenada de todo lo avanzado y un índice (`00-LEEME.md`). | Pendiente | — |
+| Claude Code (Claude Opus 5.5) | 17 · Texto completo en `docs/ia/prompt-17-seguimiento-historico.md` (seguimiento histórico de controles a partir de las fotos de la pizarra del 28/10/2026), más la línea «y dime despues de hacer esos cambios que es lo que tengo que hacer yo que no puedas hacer tu y falte para la entrega paso a paso» | Módulo «Matriz y seguimiento» del artefacto: registro de evaluaciones con revisiones, semáforo, gráfica de evolución por fechas, historial, indicadores, exportación e importación JSON, evaluaciones base recuperadas de las evidencias y datos de demostración separados; pruebas automatizadas en el navegador; documentación (`docs/seguimiento-evaluaciones.md`). | Pendiente | Fotos de la pizarra del 28/10/2026; enunciado del curso (escala 0–4, matriz) |
 
 **Declaración Jurada:**
 
@@ -71,8 +80,19 @@ Firma: ______________________________ &nbsp;&nbsp; Carné: ____________________ 
 1. Fila 07: «Leí la explicación y la usé en la reunión de avance; ajusté [X]».
 2. Fila 08: «Seguí esta guía para completar la validación».
 
+### Filas 09 a 16: ajustes del avance, artefacto, demo y copia
+1. Abra cada cosa que se menciona y compruebe que hace lo que dice la fila: el PDF del avance sin consultas, el repositorio sin notas personales, los accesos directos, el artefacto rediseñado sin la sección de IA, la demo en vivo y la carpeta `chatgpt/`.
+2. *Ejemplo:* «Ejecuté la demo en vivo y vi los 8 pasos; comprobé que las evidencias no cambiaron».
+
+### Fila 17: seguimiento histórico (pizarra del 28/10)
+1. Compare con las 2 fotos nuevas de la pizarra: E(i,t), varios controles en la misma gráfica y el semáforo rojo, amarillo y verde.
+2. Siga la guía `docs/seguimiento-evaluaciones.md`: registre al menos 2 evaluaciones propias de un control, agregue otro a la gráfica, filtre por fechas, corrija una y exporte el JSON.
+3. Decida si deja o no los datos de demostración, y si registra una madurez para la ejecución «antes» de VC-07 (hoy queda «No asignada» porque nadie la evaluó en ese momento).
+4. *Ejemplo:* «Registré 2 evaluaciones de A.8.2 con mis capturas de SQL Developer, comparé A.8.2 y A.5.17 en la gráfica y exporté el respaldo».
+
 ### Al terminar
 - [ ] Ninguna fila dice «Pendiente».
+- [ ] Si usó otra IA (por ejemplo, ChatGPT para redactar algún prompt), agregue su propia fila con esa herramienta y el prompt exacto.
 - [ ] Ejecute `python herramientas/generar_entregables.py` para actualizar el informe, el artefacto y el PDF para firmar.
 - [ ] Imprima y firme `entregables/Tabla-Uso-IA-Firmada-ISO27001-Oracle.pdf`, o fírmelo digitalmente.
 
