@@ -342,7 +342,7 @@
   // Dibuja una gráfica SVG. Se usa para la vista combinada (todas las series) y para cada tarjeta de la vista por control.
   // Los puntos se ubican en su fecha y madurez reales; los segmentos solo unen observaciones consecutivas.
   function svgGrafica(series, x0, x1, o) {
-    const W = o.W, H = o.H, m = { i: 40, d: o.etiquetas ? 70 : 18, s: 16, b: 36 };
+    const W = o.W, H = o.H, m = { i: 40, d: o.etiquetas ? 64 : 18, s: 16, b: 36 };
     const X = v => m.i + (v - x0) / (x1 - x0) * (W - m.i - m.d);
     const Y = v => m.s + (4 - v) / 4 * (H - m.s - m.b);
     const svg = sv('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': o.titulo });
@@ -355,7 +355,7 @@
       eje.append(sv('text', { x: X(t), y: H - m.b + 18, 'text-anchor': 'middle' }, etiquetaTick(t, paso)));
     }
     svg.append(rej, sv('line', { class: 'base', x1: m.i, x2: W - m.d, y1: Y(0), y2: Y(0) }), eje);
-    const capaDeltas = sv('g', {}), capaPuntos = sv('g', {});
+    const capaDeltas = sv('g', {}), capaPuntos = sv('g', {}), etiquetas = [];
     for (const s of series) {
       if (!s.puntos.length) continue;
       const col = `var(--cat-${s.color})`, P = s.puntos.map(e => [X(minutos(e)), Y(e.madurez)]);
@@ -371,7 +371,7 @@
             sv('rect', { x: cx - w / 2, y: cy - 9, width: w, height: 18, rx: 9 }), sv('text', { x: cx, y: cy + 4, 'text-anchor': 'middle' }, txt)));
         }
       }
-      if (o.etiquetas) { const u = P[P.length - 1]; svg.append(sv('text', { class: 'sg-etq', x: u[0] + 9, y: u[1] - 7 }, s.control)); }
+      if (o.etiquetas) etiquetas.push({ x: P[P.length - 1][0], y: P[P.length - 1][1], txt: s.control, col });
       s.puntos.forEach((e, i) => {
         const p = sv('g', { class: 'sg-punto' + (st.detalle && st.detalle.id === e.id ? ' activo' : ''), tabindex: '0', role: 'button',
           'aria-label': `${e.control}, ${fechaHora(e)}, madurez ${e.madurez}, ${e.estado}` },
@@ -386,6 +386,20 @@
         p.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); o.alAbrir(e); } });
         capaPuntos.append(p);
       });
+    }
+    if (etiquetas.length) {
+      // Las etiquetas se ordenan por altura y se separan al menos 14 px para que no se monten cuando varios controles terminan en el mismo nivel.
+      etiquetas.sort((a, b) => a.y - b.y || a.txt.localeCompare(b.txt));
+      const gap = 14, top = m.s, bot = H - m.b;
+      etiquetas.forEach((l, i) => { l.ly = Math.max(l.y, i ? etiquetas[i - 1].ly + gap : top); });
+      const exceso = etiquetas[etiquetas.length - 1].ly - bot;
+      if (exceso > 0) { etiquetas.forEach(l => { l.ly -= exceso; }); for (let i = etiquetas.length - 2; i >= 0; i--) etiquetas[i].ly = Math.min(etiquetas[i].ly, etiquetas[i + 1].ly - gap); }
+      const xl = W - m.d + 8, capaEtq = sv('g', {});
+      for (const l of etiquetas) {
+        capaEtq.append(sv('polyline', { class: 'sg-guia', stroke: l.col, points: `${l.x + 6},${l.y} ${xl - 4},${l.ly}` }),
+          sv('text', { class: 'sg-etq', x: xl, y: l.ly + 4 }, l.txt));
+      }
+      svg.append(capaEtq);
     }
     svg.append(capaDeltas, capaPuntos);
     return svg;
@@ -427,6 +441,8 @@
     const vacias = series.filter(s => !s.evs.length).map(s => s.control);
     if (vacias.length && vacias.length < series.length) mensaje('Sin evaluaciones en el período para: ' + vacias.join(', ') + '.');
     if (!todos.length) { mensaje('No hay evaluaciones con madurez en el período para los controles seleccionados. Cambie las fechas o use «Restablecer».'); pintarDetalle(); return; }
+    const sinEvol = series.filter(s => s.puntos.length === 1).map(s => s.control);
+    if (st.modo === 'real' && sinEvol.length && todos.length > 1) mensaje(`Sin evolución todavía (una sola evaluación con madurez): ${sinEvol.join(', ')}. Para ver mejora o deterioro en estos controles registre una nueva evaluación en otra fecha, o cambie a «Demostración».`);
     if (todos.length === 1) mensaje('Solo existe una evaluación en el período: se muestra el punto, pero no hay información suficiente para determinar una tendencia.');
 
     // Mismo eje de tiempo para todas las gráficas, para poder compararlas entre sí.

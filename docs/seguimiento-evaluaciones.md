@@ -10,7 +10,7 @@ Hay tres conjuntos que **nunca se mezclan**:
 |---|---|---|---|
 | **Base · evidencia** | El generador los crea desde los archivos reales de `evidencias/` (scripts VC). | No: se corrigen en la fuente y se regenera | «Resultados reales» |
 | **Manual** | Lo que se registra con el formulario del artefacto. | Sí, con revisiones | «Resultados reales» |
-| **Demostración** | `docs/datos/seguimiento_demo.json`: datos ficticios de 8 controles (unos mejoran, otros empeoran y otros se mantienen) para mostrar la evolución. | No | Solo «Demostración» |
+| **Demostración** | `docs/datos/seguimiento_demo.json`: datos ficticios de los 15 controles (unos mejoran, otros empeoran y otros se mantienen) para mostrar la evolución. | No | Solo «Demostración» |
 
 ### Datos base reales: qué se pudo recuperar
 
