@@ -222,7 +222,7 @@ def seccion_referencias():
     return '<ol class="refs">' + "".join(f"<li>{r}</li>" for r in REFERENCIAS) + "</ol>"
 
 
-OFICIAL_IA = "entregables/Tabla_Uso_IA_Para_Firmar.pdf"
+OFICIAL_IA = "entregables/Tabla_Uso_IA_Firmada.pdf"
 
 
 def seccion_ia():
@@ -230,7 +230,8 @@ def seccion_ia():
     # y nunca la crea ni la sobrescribe.
     return ("<p>La tabla de uso de IA con el formato de la sección 8 del enunciado (Herramienta IA, Prompt exacto utilizado, "
             "Aporte de la IA, Validación / Corrección del estudiante y Fuente verificada), la declaración jurada y los anexos A y B "
-            f"con los prompts 01 y 17 completos se entregan como documento aparte: <code>{OFICIAL_IA}</code>.</p>")
+            f"con los prompts 01 y 17 completos se entregan firmados como documento aparte: <code>{OFICIAL_IA}</code>. "
+            "En el repositorio público se incluye sin firma (<code>entregables/Tabla_Uso_IA_Para_Firmar.pdf</code>).</p>")
 
 
 ACTUAR = """

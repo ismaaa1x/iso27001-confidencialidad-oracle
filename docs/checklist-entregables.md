@@ -6,9 +6,9 @@ Marca cada casilla cuando **tú** lo hayas revisado.
 
 - [ ] **1. Informe PDF con el artefacto** → `entregables/Informe-ISO27001-Confidencialidad-Oracle.pdf` (incluye el contenido del artefacto y la ruta a `artefacto/index.html`).
 - [ ] **2. Scripts .sql de verificación** → `sql/20_verificacion/` (VC-01 a VC-15), más diagnóstico, laboratorio, pruebas, Actuar y limpieza.
-- [ ] **3. Repositorio Git** → ya está en GitHub (privado): `ismaaa1x/iso27001-confidencialidad-oracle`. Falta agregar al profesor o subirlo al Git institucional que él indique (ver sección D).
-- [ ] **4. Video de 5 minutos** → seguir `docs/guion-video.md`.
-- [ ] **5. Tabla de uso de IA firmada** → versión oficial: `entregables/Tabla_Uso_IA_Para_Firmar.pdf` (tabla con el formato de la sección 8, declaración jurada y anexos A y B). Falta firmarla y completar carné y fecha.
+- [ ] **3. Repositorio Git** → público en GitHub: https://github.com/ismaaa1x/iso27001-confidencialidad-oracle
+- [ ] **4. Video de 5 minutos** → `entregables/Video-ISO27001-Confidencialidad-Oracle.mp4` (solo en el zip; guion en `docs/guion-video.md`).
+- [ ] **5. Tabla de uso de IA firmada** → `entregables/Tabla_Uso_IA_Firmada.pdf` (solo en el zip; en el repositorio está la versión sin firma `Tabla_Uso_IA_Para_Firmar.pdf`).
 
 ## B. Rúbrica (100 pts)
 

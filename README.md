@@ -5,6 +5,8 @@ Proyecto del curso **Administración de Bases de Datos** — Escuela de Informá
 
 El proyecto diseña, aplica y **verifica con scripts** controles del Anexo A de ISO/IEC 27001:2022, usando ISO/IEC 27002:2022 como guía, para reducir riesgos de **confidencialidad** en las tareas del DBA sobre Oracle. Todo se organiza con el ciclo PHVA (Planificar-Hacer-Verificar-Actuar).
 
+**Repositorio:** https://github.com/ismaaa1x/iso27001-confidencialidad-oracle
+
 > Es un ejercicio académico sobre un laboratorio con **datos ficticios**. No representa una certificación ISO ni una evaluación de cumplimiento de una organización real.
 
 ---
@@ -15,7 +17,7 @@ El proyecto diseña, aplica y **verifica con scripts** controles del Anexo A de 
 SeguridadBases/
 ├─ README.md                      ← este archivo
 ├─ artefacto/index.html           ← ARTEFACTO interactivo (abrir con doble clic)
-├─ entregables/                   ← Informe PDF final
+├─ entregables/                   ← informe PDF y tabla de uso de IA (la firmada y el video van solo en el zip)
 ├─ sql/
 │  ├─ formato.sql                 formato de columnas para las evidencias
 │  ├─ 00_diagnostico/             PLANIFICAR · solo lectura
@@ -37,7 +39,7 @@ SeguridadBases/
 │  ├─ datos/                      riesgos, tareas, controles, matriz, pruebas y datos de demostración (JSON)
 │  ├─ seguimiento-evaluaciones.md guía del registro histórico, la gráfica y el respaldo de evaluaciones
 │  ├─ informe/                    fragmentos del informe (marco teórico, etc.)
-│  ├─ guion-video.md              guion de la demostración de 5 minutos
+│  ├─ guion-video.md              guion del video de 5 minutos (recorrido por el artefacto)
 │  ├─ checklist-entregables.md    lista de verificación de rúbrica y evidencias
 │  └─ ia/                         prompts exactos y registro de trabajo del uso de IA
 ├─ material-del-curso/            enunciado y fotos de la pizarra (local, NO se sube a Git)
@@ -141,4 +143,4 @@ Las contraseñas de usuario deben cumplir `ORA12C_STRONG_VERIFY_FUNCTION`: 9 o m
 
 ## 7. Uso de inteligencia artificial
 
-El proyecto se desarrolló con apoyo de Claude Code (Anthropic). Los prompts exactos, el aporte de la IA y el estado de validación del estudiante están en `docs/ia/`. La versión oficial de la tabla de uso de IA, con el formato de la sección 8 del enunciado, la declaración jurada y los anexos A y B con los prompts 01 y 17 completos, es `entregables/Tabla_Uso_IA_Para_Firmar.pdf` (pendiente de firma). El generador no la crea ni la sobrescribe. `docs/ia/registro-uso-ia.md` queda como registro de trabajo.
+El proyecto se desarrolló con apoyo de IA (ChatGPT y Claude Code), según se declara en la tabla de uso de IA. Esa tabla, con el formato de la sección 8 del enunciado, la declaración jurada y los anexos A y B con los prompts 01 y 17 completos, se entrega **firmada** como `entregables/Tabla_Uso_IA_Firmada.pdf` dentro del zip de entrega. En este repositorio público está la misma tabla sin firma (`entregables/Tabla_Uso_IA_Para_Firmar.pdf`), para no publicar la firma ni el carné. El generador no la crea ni la sobrescribe. `docs/ia/registro-uso-ia.md` queda como registro de trabajo.

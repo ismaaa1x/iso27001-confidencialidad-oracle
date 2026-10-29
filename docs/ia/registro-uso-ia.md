@@ -1,6 +1,6 @@
 # Tabla de uso de IA y declaración jurada (registro de trabajo)
 
-> **Versión oficial del entregable 5:** `entregables/Tabla_Uso_IA_Para_Firmar.pdf`. Ese documento reemplaza la tabla de este archivo. Este archivo se conserva como registro de trabajo y ya no se usa para generar ningún entregable.
+> **Versión oficial del entregable 5:** `entregables/Tabla_Uso_IA_Firmada.pdf` (en el zip de entrega; en el repositorio, sin firma: `entregables/Tabla_Uso_IA_Para_Firmar.pdf`). Ese documento reemplaza la tabla de este archivo. Este archivo se conserva como registro de trabajo y ya no se usa para generar ningún entregable.
 
 Formato de la sección 8 del enunciado («Uso ético y documentado de inteligencia artificial»): tabla con las columnas Herramienta IA, Prompt exacto utilizado, Aporte de la IA, Validación / Corrección del estudiante y Fuente verificada. Debajo va la declaración jurada. Es el entregable 5, «Tabla de uso de IA firmada». El informe PDF remite, en la sección «Uso de IA», a la versión oficial `entregables/Tabla_Uso_IA_Para_Firmar.pdf`.
 

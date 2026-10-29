@@ -9,4 +9,6 @@ chatgpt/
 # Respaldos JSON de evaluaciones del artefacto (locales)
 respaldos/
 chatgpt.zip
-GUION-VIDEO-PERSONAL.md
+# Se entregan en el zip, no se publican: la tabla firmada tiene datos personales y el video pesa mucho
+entregables/Tabla_Uso_IA_Firmada.pdf
+*.mp4
