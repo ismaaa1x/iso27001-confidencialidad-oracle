@@ -174,8 +174,8 @@
   }
 
   // ------------------------------------------------------------ estado de la interfaz
-  const DEFECTO = { real: ['A.8.2', 'A.8.15'], demo: ['A.8.2', 'A.5.17', 'A.8.12', 'A.8.20'] };
-  const st = { modo: 'real', desde: '', hasta: '', vista: 'resumen', hControl: '', hEstado: '', seleccion: [], detalle: null };
+  const DEFECTO = { real: ['A.8.2', 'A.8.15'], demo: ['A.8.2', 'A.5.15', 'A.8.15', 'A.8.20', 'A.5.17', 'A.8.11', 'A.8.12', 'A.8.3'] };
+  const st = { modo: 'real', desde: '', hasta: '', vista: 'resumen', hControl: '', hEstado: '', seleccion: [], detalle: null, grafVista: 'multiple' };
   function seleccionDefecto() {
     st.seleccion = [];
     DEFECTO[st.modo].forEach(c => agregarSerie(c));
@@ -324,14 +324,71 @@
     tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x + 14)) + 'px';
     tip.style.top = Math.max(8, y + h + 20 > innerHeight ? y - h - 14 : y + 14) + 'px';
   }
-  function pasoTicks(rango) {
+  function pasoTicks(rango, max = 7) {
     const pasos = [1, 5, 15, 30, 60, 180, 360, 720, 1440, 2880, 10080, 20160, 43200, 86400, 129600, 525600];
-    return pasos.find(p => rango / p <= 7) || pasos[pasos.length - 1];
+    return pasos.find(p => rango / p <= max) || pasos[pasos.length - 1];
   }
   function etiquetaTick(m, paso) {
     const d = new Date(m * 60000), dd = String(d.getUTCDate()).padStart(2, '0'), mo = String(d.getUTCMonth() + 1).padStart(2, '0');
     if (paso < 1440) return `${dd}/${mo} ${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
     return `${dd}/${mo}/${d.getUTCFullYear()}`;
+  }
+  // Cambio total entre la primera y la última evaluación con madurez (complementa a «última vs. anterior»).
+  function cambioTotal(puntos) {
+    if (puntos.length < 2) return { clase: '', txt: '—' };
+    const a = puntos[0].madurez, b = puntos[puntos.length - 1].madurez, d = b - a;
+    return { clase: d > 0 ? 'mejora' : d < 0 ? 'deterioro' : '', txt: (d > 0 ? '▲ +' + d : d < 0 ? '▼ ' + d : '● 0') + ` (${a} → ${b})` };
+  }
+  // Dibuja una gráfica SVG. Se usa para la vista combinada (todas las series) y para cada tarjeta de la vista por control.
+  // Los puntos se ubican en su fecha y madurez reales; los segmentos solo unen observaciones consecutivas.
+  function svgGrafica(series, x0, x1, o) {
+    const W = o.W, H = o.H, m = { i: 40, d: o.etiquetas ? 70 : 18, s: 16, b: 36 };
+    const X = v => m.i + (v - x0) / (x1 - x0) * (W - m.i - m.d);
+    const Y = v => m.s + (4 - v) / 4 * (H - m.s - m.b);
+    const svg = sv('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': o.titulo });
+    const rej = sv('g', { class: 'rejilla' }), eje = sv('g', { class: 'eje' });
+    for (let v = 0; v <= 4; v++) { rej.append(sv('line', { x1: m.i, x2: W - m.d, y1: Y(v), y2: Y(v) })); eje.append(sv('text', { x: m.i - 9, y: Y(v) + 4, 'text-anchor': 'end' }, String(v))); }
+    if (o.etiquetas) eje.append(sv('text', { x: 10, y: (H - m.b) / 2, transform: `rotate(-90 10 ${(H - m.b) / 2})`, 'text-anchor': 'middle' }, 'Madurez (0–4)'));
+    const paso = pasoTicks(x1 - x0, W < 500 ? 3 : 6);
+    for (let t = Math.ceil(x0 / paso) * paso; t <= x1; t += paso) {
+      rej.append(sv('line', { x1: X(t), x2: X(t), y1: m.s, y2: H - m.b, 'stroke-dasharray': '2 4' }));
+      eje.append(sv('text', { x: X(t), y: H - m.b + 18, 'text-anchor': 'middle' }, etiquetaTick(t, paso)));
+    }
+    svg.append(rej, sv('line', { class: 'base', x1: m.i, x2: W - m.d, y1: Y(0), y2: Y(0) }), eje);
+    const capaDeltas = sv('g', {}), capaPuntos = sv('g', {});
+    for (const s of series) {
+      if (!s.puntos.length) continue;
+      const col = `var(--cat-${s.color})`, P = s.puntos.map(e => [X(minutos(e)), Y(e.madurez)]);
+      if (P.length > 1) svg.append(sv('polyline', { class: 'serie', stroke: col, points: P.map(p => p.join(',')).join(' ') }));
+      if (o.deltas) {
+        // Etiqueta de cambio en cada tramo: verde si sube, rojo si baja (los tramos sin cambio no se rotulan).
+        for (let i = 1; i < P.length; i++) {
+          const d = s.puntos[i].madurez - s.puntos[i - 1].madurez;
+          if (!d) continue;
+          const txt = (d > 0 ? '▲ +' : '▼ ') + d, w = 12 + txt.length * 6.6;
+          const cx = (P[i - 1][0] + P[i][0]) / 2, cy = (P[i - 1][1] + P[i][1]) / 2 - 13;
+          capaDeltas.append(sv('g', { class: 'sg-delta ' + (d > 0 ? 'mejora' : 'deterioro') },
+            sv('rect', { x: cx - w / 2, y: cy - 9, width: w, height: 18, rx: 9 }), sv('text', { x: cx, y: cy + 4, 'text-anchor': 'middle' }, txt)));
+        }
+      }
+      if (o.etiquetas) { const u = P[P.length - 1]; svg.append(sv('text', { class: 'sg-etq', x: u[0] + 9, y: u[1] - 7 }, s.control)); }
+      s.puntos.forEach((e, i) => {
+        const p = sv('g', { class: 'sg-punto' + (st.detalle && st.detalle.id === e.id ? ' activo' : ''), tabindex: '0', role: 'button',
+          'aria-label': `${e.control}, ${fechaHora(e)}, madurez ${e.madurez}, ${e.estado}` },
+          sv('circle', { class: 'area', cx: P[i][0], cy: P[i][1], r: 13 }),
+          sv('circle', { class: 'marca', cx: P[i][0], cy: P[i][1], r: 5.5, fill: col }));
+        p.addEventListener('pointerenter', ev => mostrarTip(e, s.color, ev.clientX, ev.clientY));
+        p.addEventListener('pointermove', ev => mostrarTip(e, s.color, ev.clientX, ev.clientY));
+        p.addEventListener('pointerleave', () => { tip.hidden = true; });
+        p.addEventListener('focus', () => { const r = p.getBoundingClientRect(); mostrarTip(e, s.color, r.right, r.top); });
+        p.addEventListener('blur', () => { tip.hidden = true; });
+        p.addEventListener('click', () => o.alAbrir(e));
+        p.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); o.alAbrir(e); } });
+        capaPuntos.append(p);
+      });
+    }
+    svg.append(capaDeltas, capaPuntos);
+    return svg;
   }
   function pintarEvolucion(lista) {
     // Selector y chips
@@ -345,23 +402,24 @@
     }
     $('#sg-agregar').disabled = st.seleccion.length >= MAX_SERIES;
     $('#sg-limite').textContent = st.seleccion.length >= MAX_SERIES ? `Máximo ${MAX_SERIES} controles a la vez: quite uno para agregar otro.` : '';
+    for (const r of raiz.querySelectorAll('input[name="sg-graf"]')) r.checked = r.value === st.grafVista;
 
     const g = $('#sg-grafica'), msg = $('#sg-msg-grafica'), tend = $('#sg-t-tendencia tbody');
     g.replaceChildren(); msg.replaceChildren(); tend.replaceChildren();
     const mensaje = t => msg.append(el('div', { class: 'sg-mensaje', role: 'status' }, t));
     if (periodoInvalido()) { mensaje('La fecha «Desde» es posterior a «Hasta». Corrija el período.'); pintarDetalle(); return; }
-    if (!st.seleccion.length) { mensaje('No hay controles seleccionados. Elija un control y presione «Agregar a la gráfica».'); pintarDetalle(); return; }
+    if (!st.seleccion.length) { mensaje('No hay controles seleccionados. Elija un control y presione «Agregar a la gráfica», o use «Agregar los que tienen evolución».'); pintarDetalle(); return; }
 
     const series = st.seleccion.map(s => {
       const evs = lista.filter(e => e.control === s.control);
       return { ...s, evs, puntos: evs.filter(e => Number.isInteger(e.madurez)) };
     });
     for (const s of series) {
-      const t = tendencia(s.puntos), p = s.puntos;
+      const t = tendencia(s.puntos), tt = cambioTotal(s.puntos), p = s.puntos;
       tend.append(el('tr', {}, el('td', {}, el('span', { class: 'sg-linea', style: `background:var(--cat-${s.color})` }), ' ', el('b', {}, s.control)),
         el('td', {}, String(s.evs.length)), el('td', {}, String(p.length)),
         el('td', {}, p.length ? `${fechaHora(p[0])} · ${p[0].madurez}` : '—'), el('td', {}, p.length ? `${fechaHora(p[p.length - 1])} · ${p[p.length - 1].madurez}` : '—'),
-        el('td', {}, el('span', { class: 'sg-tend ' + t.clase }, t.txt))));
+        el('td', {}, el('span', { class: 'sg-tend ' + t.clase }, t.txt)), el('td', {}, el('span', { class: 'sg-tend ' + tt.clase }, tt.txt))));
     }
     const todos = series.flatMap(s => s.puntos.map(e => ({ e, s })));
     const sinMad = series.reduce((n, s) => n + s.evs.length - s.puntos.length, 0);
@@ -371,47 +429,34 @@
     if (!todos.length) { mensaje('No hay evaluaciones con madurez en el período para los controles seleccionados. Cambie las fechas o use «Restablecer».'); pintarDetalle(); return; }
     if (todos.length === 1) mensaje('Solo existe una evaluación en el período: se muestra el punto, pero no hay información suficiente para determinar una tendencia.');
 
-    // Escalas
-    const W = Math.max(320, g.clientWidth || 800), H = 300, m = { i: 46, d: 70, s: 14, b: 40 };
+    // Mismo eje de tiempo para todas las gráficas, para poder compararlas entre sí.
     const xs = todos.map(t => minutos(t.e));
     let x0 = Math.min(...xs), x1 = Math.max(...xs);
     const pad = Math.max((x1 - x0) * 0.06, 2);
     x0 -= pad; x1 += pad;
-    const X = v => m.i + (v - x0) / (x1 - x0) * (W - m.i - m.d);
-    const Y = v => m.s + (4 - v) / 4 * (H - m.s - m.b);
-    const svg = sv('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Evolución de la madurez de los controles seleccionados' });
-    const rej = sv('g', { class: 'rejilla' }), eje = sv('g', { class: 'eje' });
-    for (let v = 0; v <= 4; v++) { rej.append(sv('line', { x1: m.i, x2: W - m.d, y1: Y(v), y2: Y(v) })); eje.append(sv('text', { x: m.i - 10, y: Y(v) + 4, 'text-anchor': 'end' }, String(v))); }
-    eje.append(sv('text', { x: 12, y: (H - m.b) / 2, transform: `rotate(-90 12 ${(H - m.b) / 2})`, 'text-anchor': 'middle' }, 'Madurez (0–4)'));
-    const paso = pasoTicks(x1 - x0);
-    for (let t = Math.ceil(x0 / paso) * paso; t <= x1; t += paso) {
-      rej.append(sv('line', { x1: X(t), x2: X(t), y1: m.s, y2: H - m.b, 'stroke-dasharray': '2 4' }));
-      eje.append(sv('text', { x: X(t), y: H - m.b + 18, 'text-anchor': 'middle' }, etiquetaTick(t, paso)));
-    }
-    svg.append(rej, sv('line', { class: 'base', x1: m.i, x2: W - m.d, y1: Y(0), y2: Y(0) }), eje);
-    for (const s of series) {
-      if (!s.puntos.length) continue;
-      const col = `var(--cat-${s.color})`;
-      if (s.puntos.length > 1) svg.append(sv('polyline', { class: 'serie', stroke: col, points: s.puntos.map(e => `${X(minutos(e))},${Y(e.madurez)}`).join(' ') }));
-      const ult = s.puntos[s.puntos.length - 1];
-      svg.append(sv('text', { class: 'sg-etq', x: X(minutos(ult)) + 9, y: Y(ult.madurez) - 7 }, s.control));
-      for (const e of s.puntos) {
-        const p = sv('g', { class: 'sg-punto' + (st.detalle && st.detalle.id === e.id ? ' activo' : ''), tabindex: '0', role: 'button',
-          'aria-label': `${e.control}, ${fechaHora(e)}, madurez ${e.madurez}, ${e.estado}` },
-          sv('circle', { class: 'area', cx: X(minutos(e)), cy: Y(e.madurez), r: 13 }),
-          sv('circle', { class: 'marca', cx: X(minutos(e)), cy: Y(e.madurez), r: 5.5, fill: col }));
-        const abrir = () => { st.detalle = { id: e.id, control: e.control }; pintarEvolucion(lista); };
-        p.addEventListener('pointerenter', ev => mostrarTip(e, s.color, ev.clientX, ev.clientY));
-        p.addEventListener('pointermove', ev => mostrarTip(e, s.color, ev.clientX, ev.clientY));
-        p.addEventListener('pointerleave', () => { tip.hidden = true; });
-        p.addEventListener('focus', () => { const r = p.getBoundingClientRect(); mostrarTip(e, s.color, r.right, r.top); });
-        p.addEventListener('blur', () => { tip.hidden = true; });
-        p.addEventListener('click', abrir);
-        p.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrir(); } });
-        svg.append(p);
+    const alAbrir = e => { st.detalle = { id: e.id, control: e.control }; pintarEvolucion(lista); };
+
+    if (st.grafVista === 'combinada') {
+      g.append(svgGrafica(series, x0, x1, { W: Math.max(320, g.clientWidth || 800), H: 300, etiquetas: true, deltas: series.length <= 2,
+        titulo: 'Evolución de la madurez de los controles seleccionados', alAbrir }));
+    } else {
+      // Una tarjeta por control: el encabezado y el borde muestran el cambio total del período; cada tramo lleva su propia etiqueta.
+      const rejilla = el('div', { class: 'sg-multiples' }); g.append(rejilla);
+      for (const s of series) {
+        const c = CAT.get(s.control), t = tendencia(s.puntos), tt = cambioTotal(s.puntos);
+        const cuerpo = el('div', { class: 'sg-mini-graf' });
+        const total = s.puntos.length > 1 ? { clase: tt.clase, txt: (tt.clase === 'mejora' ? 'Mejoró ' : tt.clase === 'deterioro' ? 'Empeoró ' : 'Sin cambio ') + tt.txt.replace(/^[▲▼●] /, '') } : { clase: '', txt: '' };
+        rejilla.append(el('article', { class: 'sg-mini ' + total.clase },
+          el('header', {}, el('span', { class: 'sg-linea', style: `background:var(--cat-${s.color})`, 'aria-hidden': 'true' }),
+            el('span', { class: 'sg-mini-tit' }, el('b', {}, s.control), ' ', c.titulo),
+            el('span', { class: 'sg-mini-tend sg-tend ' + total.clase }, total.txt)),
+          el('div', { class: 'sg-mini-sub' }, s.puntos.length > 1 ? ['Último cambio: ', el('span', { class: 'sg-tend ' + t.clase }, t.txt), ` · ${s.puntos.length} evaluaciones con madurez`]
+            : s.puntos.length ? 'Una sola evaluación con madurez: todavía no hay tendencia.' : 'Sin evaluaciones con madurez en el período.'),
+          cuerpo));
+        cuerpo.append(svgGrafica([s], x0, x1, { W: Math.max(300, cuerpo.clientWidth || 520), H: 190, etiquetas: false, deltas: true,
+          titulo: `Evolución de ${s.control}`, alAbrir }));
       }
     }
-    g.append(svg);
     pintarDetalle(series);
   }
   function pintarDetalle(series) {
@@ -597,6 +642,14 @@
     if (!c) return mostrarResultado('error', 'Agregar a la gráfica', 'Seleccione primero un control.');
     if (st.seleccion.some(s => s.control === c)) return mostrarResultado('ok', 'Agregar a la gráfica', `${c} ya está en la gráfica.`);
     agregarSerie(c); $('#sg-resultado').replaceChildren(); pintar();
+  });
+  for (const r of raiz.querySelectorAll('input[name="sg-graf"]')) r.addEventListener('change', () => { st.grafVista = r.value; pintar(); });
+  $('#sg-agregar-evol').addEventListener('click', () => {
+    // Agrega los controles con dos o más evaluaciones con madurez en el período (hasta llenar el máximo).
+    const lista = delPeriodo();
+    const con = D.catalogo.map(c => c.id).filter(id => lista.filter(e => e.control === id && Number.isInteger(e.madurez)).length > 1);
+    if (!con.length) return mostrarResultado('ok', 'Agregar los que tienen evolución', 'Ningún control tiene dos o más evaluaciones con madurez en el período. Registre evaluaciones en otras fechas.');
+    con.forEach(agregarSerie); $('#sg-resultado').replaceChildren(); pintar();
   });
   $('#sg-quitar-todos').addEventListener('click', () => { st.seleccion = []; st.detalle = null; pintar(); });
   $('#sg-historial-completo').addEventListener('click', () => {

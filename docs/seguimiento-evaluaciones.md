@@ -10,7 +10,7 @@ Hay tres conjuntos que **nunca se mezclan**:
 |---|---|---|---|
 | **Base · evidencia** | El generador los crea desde los archivos reales de `evidencias/` (scripts VC). | No: se corrigen en la fuente y se regenera | «Resultados reales» |
 | **Manual** | Lo que se registra con el formulario del artefacto. | Sí, con revisiones | «Resultados reales» |
-| **Demostración** | `docs/datos/seguimiento_demo.json`: datos ficticios para mostrar la evolución. | No | Solo «Demostración» |
+| **Demostración** | `docs/datos/seguimiento_demo.json`: datos ficticios de 8 controles (unos mejoran, otros empeoran y otros se mantienen) para mostrar la evolución. | No | Solo «Demostración» |
 
 ### Datos base reales: qué se pudo recuperar
 
@@ -63,7 +63,10 @@ Este historial de revisiones vive en el navegador y sirve para rastrear correcci
   - **«Quitar»** solo lo saca de la gráfica: sus datos se conservan.
   - **Color de la línea** = control (cada uno mantiene su color mientras esté en la gráfica). **Semáforo** = estado de cada evaluación (✓ verde Cumple, ! amarillo Parcial, ✕ rojo No cumple, gris pendiente), que aparece al señalar un punto o al seleccionarlo con el teclado (Tab y Enter).
   - Eje horizontal proporcional al tiempo; eje vertical de madurez del 0 al 4. Cada punto es una evaluación real. Los segmentos solo unen observaciones puntuales: no hay valores intermedios ni curvas suavizadas.
-  - La tabla **«Tendencia por control»** compara la última evaluación con la anterior: ▲ Mejora, ▼ Deterioro o ● Estable. Con una sola evaluación indica que no hay información suficiente.
+  - **«Agregar los que tienen evolución»** agrega de una vez los controles con dos o más evaluaciones con madurez en el período.
+  - **Ver: «Una gráfica por control»** (predeterminada) muestra una tarjeta por control con el mismo eje de tiempo. El encabezado dice si el control **mejoró, empeoró o no cambió** entre la primera y la última evaluación, y el borde superior se pinta de verde (mejoró), rojo (empeoró) o gris (sin cambio). Cada tramo con cambio lleva una etiqueta **▲ +n** (verde) o **▼ −n** (rojo).
+  - **Ver: «Todos en una gráfica»** superpone las líneas para compararlas. Con uno o dos controles también muestra las etiquetas de cambio.
+  - La tabla **«Tendencia por control»** tiene dos columnas: «última vs. anterior» (▲ Mejora, ▼ Deterioro o ● Estable) y «cambio total» de la primera a la última. Con una sola evaluación indica que no hay información suficiente.
 
 ## 5. Filtrar por fechas
 

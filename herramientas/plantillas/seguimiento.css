@@ -1,7 +1,7 @@
 /* Módulo «Matriz y seguimiento» del artefacto (lo incrusta generar_entregables.py). */
-:root{--cat-1:#2a78d6;--cat-2:#eb6834;--cat-3:#1baf7a;--cat-4:#eda100;--cat-5:#e87ba4;--cat-6:#008300;--cat-7:#6250d6;--cat-8:#e34948;--pendiente:#8a93a5}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--cat-1:#3987e5;--cat-2:#d95926;--cat-3:#199e70;--cat-4:#c98500;--cat-5:#d55181;--cat-6:#008300;--cat-7:#9085e9;--cat-8:#e66767;--pendiente:#9aa3b5}}
-:root[data-theme="dark"]{--cat-1:#3987e5;--cat-2:#d95926;--cat-3:#199e70;--cat-4:#c98500;--cat-5:#d55181;--cat-6:#008300;--cat-7:#9085e9;--cat-8:#e66767;--pendiente:#9aa3b5}
+:root{--cat-1:#2a78d6;--cat-2:#eb6834;--cat-3:#1baf7a;--cat-4:#eda100;--cat-5:#e87ba4;--cat-6:#8a5a2b;--cat-7:#6250d6;--cat-8:#4b5d7a;--pendiente:#8a93a5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--cat-1:#3987e5;--cat-2:#d95926;--cat-3:#199e70;--cat-4:#c98500;--cat-5:#d55181;--cat-6:#b98252;--cat-7:#9085e9;--cat-8:#8a9cbc;--pendiente:#9aa3b5}}
+:root[data-theme="dark"]{--cat-1:#3987e5;--cat-2:#d95926;--cat-3:#199e70;--cat-4:#c98500;--cat-5:#d55181;--cat-6:#b98252;--cat-7:#9085e9;--cat-8:#8a9cbc;--pendiente:#9aa3b5}
 
 .sg-avisos:empty{display:none}
 .sg-aviso{display:flex;gap:10px;align-items:flex-start;border-radius:10px;padding:10px 14px;margin:0 0 10px;font-size:13.5px;border:1px solid var(--line);background:var(--panel)}
@@ -98,3 +98,15 @@ dialog.sg-dialogo{width:min(760px,96vw)}
 .sg-guardado.error{color:var(--critical);font-weight:600}
 @media (max-width:700px){.sg-form{grid-template-columns:1fr}}
 @media print{.sg-barra,.sg-tabs,.sg-btn{display:none}}
+.sg-modo-graf{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:13px;margin:6px 0 2px}
+.sg-modo-graf>span{color:var(--muted)}
+.sg-modo-graf label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.sg-multiples{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:12px}
+.sg-mini{border:1px solid var(--line);border-top:4px solid var(--line);border-radius:10px;padding:10px 12px 4px;background:var(--panel);min-width:0}
+.sg-mini.mejora{border-top-color:var(--good)}.sg-mini.deterioro{border-top-color:var(--critical)}
+.sg-mini header{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:13.5px}
+.sg-mini-tit{flex:1 1 180px;min-width:0}
+.sg-mini-tend{font-weight:700;font-size:13px;white-space:nowrap}
+.sg-mini-sub{font-size:12px;color:var(--muted);margin:3px 0 0}
+.sg-delta rect{fill:var(--muted)}.sg-delta text{fill:#fff;font-size:11px;font-weight:700}
+.sg-delta.mejora rect{fill:var(--good)}.sg-delta.deterioro rect{fill:var(--critical)}

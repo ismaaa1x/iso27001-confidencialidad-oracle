@@ -755,19 +755,24 @@ def seguimiento_html():
  <div class="sg-filtros">
   <label class="sg-campo">Control<select id="sg-agregar-control"></select></label>
   <button type="button" class="sg-btn prim" id="sg-agregar">Agregar a la gráfica</button>
+  <button type="button" class="sg-btn" id="sg-agregar-evol">Agregar los que tienen evolución</button>
   <button type="button" class="sg-btn" id="sg-quitar-todos">Quitar todos</button>
   <button type="button" class="sg-btn" id="sg-historial-completo">Ver historial completo</button>
   <span class="sg-nota" id="sg-limite" style="margin:0"></span></div>
  <div class="sg-sel" id="sg-chips" aria-label="Controles en la gráfica"></div>
+ <div class="sg-modo-graf" role="radiogroup" aria-label="Tipo de gráfica"><span>Ver:</span>
+  <label><input type="radio" name="sg-graf" value="multiple" checked> Una gráfica por control</label>
+  <label><input type="radio" name="sg-graf" value="combinada"> Todos en una gráfica</label></div>
  <div id="sg-msg-grafica"></div>
  <div class="sg-grafica" id="sg-grafica"></div>
  <div class="sg-leyenda-nota">
   <span><b>Color de la línea</b> = control (se mantiene mientras esté en la gráfica).</span>
   <span><b>Semáforo</b> = estado de cada evaluación: <span class="sg-sem ok"><i aria-hidden="true">✓</i>Cumple</span> <span class="sg-sem warn"><i aria-hidden="true">!</i>Parcial</span> <span class="sg-sem bad"><i aria-hidden="true">✕</i>No cumple</span>. Aparece al señalar o seleccionar un punto.</span>
+  <span><b>Etiquetas ▲ +n / ▼ −n</b> = cambio de madurez entre dos evaluaciones seguidas (verde mejora, rojo deterioro). En «Una gráfica por control», el borde superior de cada tarjeta se pinta según la tendencia.</span>
   <span>Cada punto es una evaluación registrada; los segmentos solo unen observaciones puntuales y no representan mediciones intermedias. El eje horizontal es proporcional al tiempo; las evaluaciones sin hora se ubican al inicio de su día.</span></div>
  <div class="sg-detalle" id="sg-detalle" aria-live="polite"></div>
  <h3>Tendencia por control (en el período)</h3>
- <div class="sg-tabla"><table id="sg-t-tendencia"><thead><tr>{th("Control", "Evaluaciones", "Con madurez", "Primera", "Última", "Tendencia (última vs. anterior)")}</tr></thead><tbody></tbody></table></div>
+ <div class="sg-tabla"><table id="sg-t-tendencia"><thead><tr>{th("Control", "Evaluaciones", "Con madurez", "Primera", "Última", "Tendencia (última vs. anterior)", "Cambio total (primera → última)")}</tr></thead><tbody></tbody></table></div>
 </section>
 <dialog id="sg-dlg-form" class="sg-dialogo" aria-labelledby="sg-f-titulo">
  <div class="vcab"><strong id="sg-f-titulo">Registrar evaluación</strong></div>
